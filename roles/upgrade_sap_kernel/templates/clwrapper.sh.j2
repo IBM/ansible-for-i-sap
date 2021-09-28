@@ -1,0 +1,45 @@
+#!/QOpenSys/usr/bin/bash
+
+#   Copyright 2021 IBM Corporation
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+SESSION=$RANDOM
+
+TEMPFILE=/tmp/clwrapper-session-$SESSION
+TMPLIB=L$SESSION
+SRCFILE=CWS$SESSION
+SRCMEMBER=C$SESSION
+PGM=CWP$SESSION
+
+touch "$TEMPFILE"
+chmod 700 "$TEMPFILE"
+
+echo PGM    >  "$TEMPFILE"
+cat         >> "$TEMPFILE"
+echo ENDPGM >> "$TEMPFILE"
+
+system "CRTLIB LIB(${TMPLIB})"
+system "CRTSRCPF FILE(${TMPLIB}/${SRCFILE}) RCDLEN(240)"
+system "CPYFRMSTMF FROMSTMF('$TEMPFILE') TOMBR('/QSYS.LIB/${TMPLIB}.LIB/${SRCFILE}.FILE/${SRCMEMBER}.MBR') MBROPT(*ADD)"
+system "CRTCLPGM PGM(${TMPLIB}/${PGM}) SRCFILE(${TMPLIB}/${SRCFILE}) SRCMBR(${SRCMEMBER})"
+system "CALL PGM(${TMPLIB}/${PGM})"
+
+RTN=$?
+
+system "DLTF FILE(${TMPLIB}/${SRCFILE})"
+system "DLTPGM PGM(${TMPLIB}/${PGM})"
+system "DLTLIB LIB(${TMPLIB})"
+system "RMVLNK OBJLNK('$TEMPFILE')"
+
+exit $RTN
