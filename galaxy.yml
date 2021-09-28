@@ -56,7 +56,7 @@ dependencies: {}
 repository: https://github.com/IBM/ansible-for-i-sap
 
 # The URL to any online docs
-documentation: https://github.com/IBM/ansible-for-i-sap/README.md
+documentation: https://github.com/IBM/ansible-for-i-sap#readme
 
 # The URL to the homepage of the collection/project
 homepage: https://github.com/IBM/ansible-for-i-sap
