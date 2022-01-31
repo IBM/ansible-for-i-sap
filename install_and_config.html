@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation and configuration &mdash; IBM ansible-for-i-sap collection 1.1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Role install_saphostagent" href="install_saphostagent.html" />
+    <link rel="prev" title="Ansible Content for IBM Power Systems - IBM i with SAP Software" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> IBM ansible-for-i-sap collection
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation and configuration</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation and configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation-using-ibm-i-access-client-solutions-acs">Installation using IBM i Access Client Solutions (ACS)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation-using-a-command-line-interface-ssh-qp2term">Installation using a command line interface (SSH, QP2TERM)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#license">License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#author-information">Author Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#copyright">Copyright</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Available roles</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install_saphostagent.html">Role install_saphostagent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sap_opsyscheck.html">Role sap_opsyscheck</a></li>
+<li class="toctree-l1"><a class="reference internal" href="start_sap.html">Role start_sap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stop_sap.html">Role stop_sap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upgrade_sap_kernel.html">Role upgrade_sap_kernel</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">IBM ansible-for-i-sap collection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Installation and configuration</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/IBM/ansible-for-i-sap/blob/main/docs/docsite/install_and_config.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation-and-configuration">
+<span id="ibm-ansible-for-i-sap-docsite-install-and-config"></span><h1>Installation and configuration<a class="headerlink" href="#installation-and-configuration" title="Permalink to this headline"></a></h1>
+<p>Ansible is a tool to automate IT administration tasks. It comprises one <em>controlling node</em>, on which the Ansible collections are stored and executed, and one or multiple <em>managed nodes</em>, for which the administration tasks are performed. The general concept of Ansible assumes agent-less operations, i.e. the Ansible collections are only installed on the controlling node, but not on the managed nodes. Whenever updates are applied to the Ansible collections, they only need to be applied to the controlling node.</p>
+<p>Nevertheless, the usage of Ansible collections requires a one-time setup on both the controlling node and the managed nodes. All nodes need to be enabled to run Open Source packages and have Python 3 installed. On the controlling node, also Ansible version 2.9 or higher must be installed.</p>
+<section id="prerequisites">
+<span id="ibm-ansible-for-i-sap-docsite-install-and-config-prerequisites"></span><h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline"></a></h2>
+<p>To execute Ansible playbooks for SAP on IBM i, the following is required:</p>
+<ol class="arabic simple">
+<li><p>Your endpoints must run IBM i release 7.2 or higher.</p></li>
+<li><p>Licensed program 5770-SS1, option 33 (“Portable App Solutions Environment”) must be installed.</p></li>
+<li><p>Licensed program 5733-SC1, options *BASE (“IBM Portable Utilities for i”) and 1 (“OpenSSH, OpenSSL, zlib”) must be installed.</p></li>
+<li><p>Open Source Package Management through IBM i Access Client Solutions must be enabled as described at <a class="reference external" href="https://www.ibm.com/support/pages/node/706903">https://www.ibm.com/support/pages/node/706903</a>.</p></li>
+<li><p>You must install Python 3 on your endpoints from <a class="reference external" href="https://ibm.biz/ibmi-rpms">https://ibm.biz/ibmi-rpms</a>.</p></li>
+<li><p>You must run Ansible version 2.9 or later on your controlling node (Ansible automation engine).</p></li>
+</ol>
+<p>It is recommended that you use a dedicated user profile on IBM i for your Ansible playbooks. There may be different authority requirements for the individual roles. To avoid authority problems, it is recommended that you create the user profile with user class <em>*SECOFR</em> or with sufficient special authorities:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CRTUSRPRF</span> <span class="n">USRPRF</span><span class="p">(</span><span class="n">ANSIBLE</span><span class="p">)</span> <span class="n">PASSWORD</span><span class="p">(</span><span class="o">&lt;...&gt;</span><span class="p">)</span> <span class="n">USRCLS</span><span class="p">(</span><span class="o">*</span><span class="n">SECOFR</span><span class="p">)</span> <span class="n">TEXT</span><span class="p">(</span><span class="s1">&#39;Ansible functional user&#39;</span><span class="p">)</span> <span class="n">SPCAUT</span><span class="p">(</span><span class="o">*</span><span class="n">USRCLS</span><span class="p">)</span> <span class="n">OWNER</span><span class="p">(</span><span class="o">*</span><span class="n">USRPRF</span><span class="p">)</span> <span class="n">LANGID</span><span class="p">(</span><span class="n">ENU</span><span class="p">)</span> <span class="n">CNTRYID</span><span class="p">(</span><span class="n">US</span><span class="p">)</span> <span class="n">CCSID</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span> <span class="n">LOCALE</span><span class="p">(</span><span class="o">*</span><span class="n">NONE</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CRTUSRPRF</span> <span class="n">USRPRF</span><span class="p">(</span><span class="n">ANSIBLE</span><span class="p">)</span> <span class="n">PASSWORD</span><span class="p">(</span><span class="o">&lt;...&gt;</span><span class="p">)</span> <span class="n">USRCLS</span><span class="p">(</span><span class="o">*</span><span class="n">PGMR</span><span class="p">)</span> <span class="n">TEXT</span><span class="p">(</span><span class="s1">&#39;Ansible functional user&#39;</span><span class="p">)</span> <span class="n">SPCAUT</span><span class="p">(</span><span class="o">*</span><span class="n">ALLOBJ</span> <span class="o">*</span><span class="n">SECADM</span> <span class="o">*</span><span class="n">JOBCTL</span> <span class="o">*</span><span class="n">SPLCTL</span> <span class="o">*</span><span class="n">IOSYSCFG</span> <span class="o">*</span><span class="n">SAVSYS</span><span class="p">)</span> <span class="n">OWNER</span><span class="p">(</span><span class="o">*</span><span class="n">USRPRF</span><span class="p">)</span> <span class="n">LANGID</span><span class="p">(</span><span class="n">ENU</span><span class="p">)</span> <span class="n">CNTRYID</span><span class="p">(</span><span class="n">US</span><span class="p">)</span> <span class="n">CCSID</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span> <span class="n">LOCALE</span><span class="p">(</span><span class="o">*</span><span class="n">NONE</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="installation-using-ibm-i-access-client-solutions-acs">
+<h2>Installation using IBM i Access Client Solutions (ACS)<a class="headerlink" href="#installation-using-ibm-i-access-client-solutions-acs" title="Permalink to this headline"></a></h2>
+<ol class="arabic simple">
+<li><p>If IBM i Access Client Solutions client is not installed on your workstation or at a level earlier than 1.1.8.3, download it from <a class="reference external" href="https://www.ibm.com/marketing/iwm/platform/mrs/assets?source=swg-ia">https://www.ibm.com/marketing/iwm/platform/mrs/assets?source=swg-ia</a> (IBM ID required) and install it on your workstation.</p></li>
+<li><p>On the target IBM i server, start the SSHD (Secure Shell Daemon) TCP/IP Server, which is shipped with 5733-SC1 option 1. Command: <code class="docutils literal notranslate"><span class="pre">STRTCPSVR</span> <span class="pre">SERVER(*SSHD)</span></code></p></li>
+<li><p>Start IBM i Access Client Solutions on your workstation.</p></li>
+<li><p>Configure every IBM i host that you want to use as Ansible controlling node or Ansible managed node in IBM i Access Client Solutions.</p></li>
+</ol>
+<p>The following steps will prepare your IBM i host to run open-source software in general and install the packages Ansible 2.9 packages required to run Ansible 2.9, including python3. You do not need the Ansible package on the managed nodes (only on the controlling node), but it is easier to collect all required packages for the managed nodes by simply installing Ansible there as well. Repeat the following steps for each IBM i host that you want to use with Ansible:</p>
+<ol class="arabic">
+<li><p>Select the target IBM i host.</p></li>
+<li><p>Select <em>Tools</em> –&gt; <em>Open Source Package Management</em>:</p>
+<blockquote>
+<div><img alt="_images/ACS_OpenSourcePackageManagement.png" src="_images/ACS_OpenSourcePackageManagement.png" />
+</div></blockquote>
+</li>
+<li><p>Specify login information for your IBM i server. You can keep the defaults for other parameters in this screen. To allow QSECOFR to login, you must have specified <code class="docutils literal notranslate"><span class="pre">PermitRootLogin</span> <span class="pre">yes</span></code> in /QOpenSys/QIBM/ProdData/SC1/OpenSSH/etc/sshd_config) before starting the SSH daemon:</p>
+<blockquote>
+<div><img alt="_images/ConnectToSSH.png" src="_images/ConnectToSSH.png" />
+</div></blockquote>
+</li>
+<li><p>Confirm the popup message about the RSA key fingerprint:</p>
+<blockquote>
+<div><img alt="_images/RSAKeyFingerprint.png" src="_images/RSAKeyFingerprint.png" />
+</div></blockquote>
+</li>
+<li><p>Confirm to install the open-source environment in the next popup window:</p>
+<blockquote>
+<div><img alt="_images/InquiryInstallOpenSource.png" src="_images/InquiryInstallOpenSource.png" />
+</div></blockquote>
+</li>
+<li><p>Wait while the open-source environment is downloaded:</p>
+<blockquote>
+<div><img alt="_images/InstallingOpenSource.png" src="_images/InstallingOpenSource.png" />
+</div></blockquote>
+</li>
+<li><p>At the end, you will see a completion message and an output window with possible error messages. Both windows can be closed if no error occurred:</p>
+<blockquote>
+<div><img alt="_images/InstallationCompleted.png" src="_images/InstallationCompleted.png" />
+<img alt="_images/InstallationOutput.png" src="_images/InstallationOutput.png" />
+</div></blockquote>
+</li>
+<li><p>Upon success, you will receive a list of installed packages. Note that python3 (required for Ansible) is not part of the list:</p>
+<blockquote>
+<div><img alt="_images/InstalledPackagesDefault.png" src="_images/InstalledPackagesDefault.png" />
+</div></blockquote>
+</li>
+<li><p>Select the tab <em>Available Packages</em> in <em>Tools</em> –&gt; <em>Open Source Package Management</em>. Mark the line for Ansible 2.9 and select <em>Install</em>:</p>
+<blockquote>
+<div><img alt="_images/Ansible29Selection.png" src="_images/Ansible29Selection.png" />
+</div></blockquote>
+</li>
+<li><p>Besides Ansible, a number of packages around Python 3 will also be installed:</p>
+<blockquote>
+<div><img alt="_images/AnsibleDependendPackages.png" src="_images/AnsibleDependendPackages.png" />
+</div></blockquote>
+</li>
+<li><p>Upon success, you will see a completion message similar to this:</p>
+<blockquote>
+<div><img alt="_images/AnsibleInstallCompletion.png" src="_images/AnsibleInstallCompletion.png" />
+</div></blockquote>
+</li>
+</ol>
+<p>Your IBM i host is now ready to act as an Ansible controlling node or managed node. You can now install the Ansible roles that you want to use on your controlling node.</p>
+</section>
+<section id="installation-using-a-command-line-interface-ssh-qp2term">
+<h2>Installation using a command line interface (SSH, QP2TERM)<a class="headerlink" href="#installation-using-a-command-line-interface-ssh-qp2term" title="Permalink to this headline"></a></h2>
+<p>On every IBM i host you want to be an end point for ansible (target host, remote host), you have to perform the following 2 steps:</p>
+<ol class="arabic">
+<li><p>Install the new Open Source Solutions package.
+Because 5733-OPS no longer is available for IBM i V7R2 and higher (see: <a class="reference external" href="https://www.ibm.com/support/pages/node/668177">https://www.ibm.com/support/pages/node/668177</a>), install the new Open Source Solutions package according to <a class="reference external" href="https://ibmi-oss-docs.readthedocs.io/en/latest/yum/README.html">https://ibmi-oss-docs.readthedocs.io/en/latest/yum/README.html</a></p>
+<p>Download bootstrap.sh (<a class="reference external" href="https://public.dhe.ibm.com/software/ibmi/products/pase/rpms/bootstrap.sh">https://public.dhe.ibm.com/software/ibmi/products/pase/rpms/bootstrap.sh</a>) and bootstrap.tar.Z (<a class="reference external" href="https://public.dhe.ibm.com/software/ibmi/products/pase/rpms/bootstrap.tar.Z">https://public.dhe.ibm.com/software/ibmi/products/pase/rpms/bootstrap.tar.Z</a>), put it on the IBM i machines, then execute:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> /tmp
+touch /tmp/bootstrap.log<span class="p">;</span> /QOpenSys/usr/bin/ksh /tmp/bootstrap.sh &gt; /tmp/bootstrap.log <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</pre></div>
+</div>
+<p>After successful installation, adjust your search path <code class="docutils literal notranslate"><span class="pre">$PATH</span></code> by adding <code class="docutils literal notranslate"><span class="pre">/QOpenSys/pkgs/bin</span></code>:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;/QOpenSys/pkgs/bin:</span><span class="si">${</span><span class="nv">PATH</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="nb">export</span> PATH
+</pre></div>
+</div>
+</li>
+<li><p>Install Python 3 on the IBM i hosts you want to use as remotes:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">PATH</span><span class="o">=</span>/QOpenSys/pkgs/bin:/QOpenSys/usr/bin:/usr/ccs/bin:/usr/sbin:.:/usr/bin:/usr/local/bin:<span class="nv">$PATH</span>
+<span class="nb">export</span> PATH
+
+<span class="nv">LIBPATH</span><span class="o">=</span>.:<span class="nv">$LIBPATH</span>
+<span class="nb">export</span> LIBPATH
+
+yum install python3-pip python3-ibm_db python3-itoolkit
+</pre></div>
+</div>
+</li>
+</ol>
+<p>For every IBM i host you want to use as controlling node(s), additionally perform the following 2 steps:</p>
+<ol class="arabic">
+<li><p>Install Ansible (required only on the controlling node(s)):</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>yum install ansible
+</pre></div>
+</div>
+</li>
+<li><p>Install the Ansible roles that you want to use (required only on the controlling node(s)):</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>ansible-galaxy install &lt;path to ansible role&gt;
+</pre></div>
+</div>
+</li>
+</ol>
+<p>Your IBM i host is now ready to act as an Ansible controlling node or managed node. You can now install the Ansible roles that you want to use on your controlling node.</p>
+</section>
+<section id="configuration">
+<span id="ibm-ansible-for-i-sap-docsite-install-and-config-configuration"></span><h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline"></a></h2>
+<ol class="arabic">
+<li><p>On the controlling node, create an Ansible configuration file similar to the following example:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi ~/.ansible.cfg
+
+<span class="c1">#remote_tmp     = ~/.ansible/tmp</span>
+<span class="c1">#local_tmp      = ~/.ansible/tmp</span>
+<span class="nv">inventory</span>       <span class="o">=</span> ~/.ansible/hosts
+<span class="nv">library</span>         <span class="o">=</span> ~/.ansible/modules
+<span class="nv">roles_path</span>      <span class="o">=</span> ~/.ansible/roles
+<span class="nv">ssh_args</span>        <span class="o">=</span> -i /home/johndoe/ssh/id_rsa
+<span class="nv">transfer_method</span> <span class="o">=</span> scp
+</pre></div>
+</div>
+</li>
+<li><p>On the controlling node, create an inventory file similar to the following example:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>vi ~/.ansible/hosts
+
+<span class="o">[</span>ibmi_servers<span class="o">]</span>
+ibmiserver01.mycorp.com
+ibmiserver02.mycorp.com
+ibmiserver03.mycorp.com
+
+<span class="o">[</span>ibmi_servers:vars<span class="o">]</span>
+<span class="nv">ansible_python_interpreter</span><span class="o">=</span>/QOpenSys/pkgs/bin/python3
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline"></a></h2>
+<p>This collection is licensed under the <a class="reference external" href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 license</a>.</p>
+</section>
+<section id="author-information">
+<h2>Author Information<a class="headerlink" href="#author-information" title="Permalink to this headline"></a></h2>
+<p>SAP on IBM Power Development Team</p>
+</section>
+<section id="copyright">
+<h2>Copyright<a class="headerlink" href="#copyright" title="Permalink to this headline"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Ansible Content for IBM Power Systems - IBM i with SAP Software" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="install_saphostagent.html" class="btn btn-neutral float-right" title="Role install_saphostagent" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021,2022, IBM.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

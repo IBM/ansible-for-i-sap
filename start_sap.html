@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Role start_sap &mdash; IBM ansible-for-i-sap collection 1.1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Role stop_sap" href="stop_sap.html" />
+    <link rel="prev" title="Role sap_opsyscheck" href="sap_opsyscheck.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> IBM ansible-for-i-sap collection
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation and configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install_and_config.html">Installation and configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Available roles</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install_saphostagent.html">Role install_saphostagent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sap_opsyscheck.html">Role sap_opsyscheck</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Role start_sap</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tags">Tags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#variables">Variables</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#remarks">Remarks:</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#defaults">Defaults</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-playbook">Example Playbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#license">License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#author-information">Author Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#copyright">Copyright</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stop_sap.html">Role stop_sap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upgrade_sap_kernel.html">Role upgrade_sap_kernel</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">IBM ansible-for-i-sap collection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Role start_sap</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/IBM/ansible-for-i-sap/blob/main/docs/docsite/start_sap.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="role-start-sap">
+<span id="ibm-ansible-for-i-sap-docsite-start-sap"></span><h1><a class="toc-backref" href="#id8">Role start_sap</a><a class="headerlink" href="#role-start-sap" title="Permalink to this headline"></a></h1>
+<p>The role start_sap is used to start one or multiple SAP instances, either for a given SAP system ID (tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_start_instance</span></code>) or for all SAP systems that are configured in file /usr/sap/sapservices (tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_start_all_instances</span></code>). If a requested SAP instance is already active, the request will be ignored and no error message will be sent. The role start_sap is using the sapcontrol command of the SAP Host Agent as suggested in <a class="reference external" href="https://launchpad.support.sap.com/#/notes/1763593">SAP Note 1763593</a>. It requires that the SAP start services for the selected instances are active. By default, the SAP start services are started automatically when the subsystem QUSRWRK is started. If the SAP start services are not active, they can be started by using this role with the tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_start_services</span></code>.</p>
+<p>If the role start_sap is used with tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_start_instance</span></code>, it needs the SAP system ID as input in variable <code class="docutils literal notranslate"><span class="pre">startsap_input_sap_sid</span></code>. An SAP instance number can be provided optionally in variable <code class="docutils literal notranslate"><span class="pre">startsap_input_sap_instance_nr</span></code>. If an instance number is provided, only this instance is started. If no instance number is provided, start_sap will start all configured instances for the given SID, also on remote servers in a distributed landscape. It is recommended that the role start_sap is executed on the logical partition or server that hosts the central services instance (ASCS, SCS), the primary application server instance, or the central instance.</p>
+<p>If the role start_sap is used with tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_start_all_instances</span></code>, the values in the variables <code class="docutils literal notranslate"><span class="pre">startsap_input_sap_sid</span></code> and <code class="docutils literal notranslate"><span class="pre">startsap_input_sap_instance_nr</span></code> are ignored. Instead, all SAP systems that are configured in file /usr/sap/sapservices will be started with all their instances.</p>
+<p>If the role start_sap is used with tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_start_services</span></code>, you can specify a SAP system ID in variable <code class="docutils literal notranslate"><span class="pre">startsap_input_sap_sid</span></code> or the special value <code class="docutils literal notranslate"><span class="pre">&quot;*&quot;</span></code>. If you specify <code class="docutils literal notranslate"><span class="pre">&quot;*&quot;</span></code>, SAP start services will be started for all SAP systems that are configured in /usr/sap/sapservices.</p>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#role-start-sap" id="id8">Role start_sap</a></p>
+<ul>
+<li><p><a class="reference internal" href="#requirements" id="id9">Requirements</a></p></li>
+<li><p><a class="reference internal" href="#tags" id="id10">Tags</a></p></li>
+<li><p><a class="reference internal" href="#variables" id="id11">Variables</a></p></li>
+<li><p><a class="reference internal" href="#defaults" id="id12">Defaults</a></p></li>
+<li><p><a class="reference internal" href="#dependencies" id="id13">Dependencies</a></p></li>
+<li><p><a class="reference internal" href="#example-playbook" id="id14">Example Playbook</a></p></li>
+<li><p><a class="reference internal" href="#license" id="id15">License</a></p></li>
+<li><p><a class="reference internal" href="#author-information" id="id16">Author Information</a></p></li>
+<li><p><a class="reference internal" href="#copyright" id="id17">Copyright</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="requirements">
+<h2><a class="toc-backref" href="#id9">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this headline"></a></h2>
+<p>This role is intended for the operating system IBM i. The target system must be enabled to execute Ansible playbooks. For details, see the prerequisites section in <a class="reference internal" href="install_and_config.html#ibm-ansible-for-i-sap-docsite-install-and-config-prerequisites"><span class="std std-ref">Ansible Content for IBM Power Systems - IBM i with SAP Software</span></a>.</p>
+<p>The SAP start services for the requested SAP system must be configured in file /usr/sap/sapservices. In a standard installation, they are started automatically after an IPL when subsystem QUSRWRK is started (autostart job entry SAPINIT). They can be started manually by calling program <code class="docutils literal notranslate"><span class="pre">R3SAP400/SAPINIT</span></code> or by executing the role start_sap with tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_start_services</span></code>.</p>
+</section>
+<section id="tags">
+<h2><a class="toc-backref" href="#id10">Tags</a><a class="headerlink" href="#tags" title="Permalink to this headline"></a></h2>
+<p>Specify one of the following tags to specify what parts of an SAP system you want to start. If you do not specify a tag, <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_start_instance</span></code> will be assumed as default. If you misspell the tag, no steps in the role will be executed.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 76%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Tag</p></th>
+<th class="head"><p>Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sap_start_instance</span></code></p></td>
+<td><p>One or all instances for a specific SAP system ID are started. The SAP system ID must be
+specified in variable <code class="docutils literal notranslate"><span class="pre">startsap_input_sap_sid</span></code>, the instance number can optionally be
+specified in variable <code class="docutils literal notranslate"><span class="pre">startsap_input_sap_instance_nr</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sap_start_all_instances</span></code></p></td>
+<td><p>All instances are started for all SAP systems that are configured in file /usr/sap/sapservices.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sap_start_services</span></code></p></td>
+<td><p>Start SAP start services for the SAP system ID specified in variable <code class="docutils literal notranslate"><span class="pre">startsap_input_sap_sid</span></code>
+or for all SAP systems that are configured in file /usr/sap/sapservices when variable
+<code class="docutils literal notranslate"><span class="pre">startsap_input_sap_sid</span></code> is set to <code class="docutils literal notranslate"><span class="pre">&quot;*&quot;</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="variables">
+<h2><a class="toc-backref" href="#id11">Variables</a><a class="headerlink" href="#variables" title="Permalink to this headline"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 62%" />
+<col style="width: 8%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Usage</p></th>
+<th class="head"><p>Required</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">startsap_dir_sapctrl_managednode</span></code></p></td>
+<td><p>Directory path on the target host where the sapcontrol executable is located</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id5" id="id1">1</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">startsap_input_sap_sid</span></code></p></td>
+<td><p>SAP system ID or <code class="docutils literal notranslate"><span class="pre">&quot;*&quot;</span></code></p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id6" id="id2">2</a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">startsap_input_sap_instance_nr</span></code></p></td>
+<td><p>SAP instance number</p></td>
+<td><p>No <a class="footnote-reference brackets" href="#id7" id="id3">3</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">startsap_input_waitforstarted</span></code></p></td>
+<td><p>Timeout in seconds when waiting for instance to be completely started</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id5" id="id4">1</a></p></td>
+</tr>
+</tbody>
+</table>
+<section id="remarks">
+<h3>Remarks:<a class="headerlink" href="#remarks" title="Permalink to this headline"></a></h3>
+<dl class="footnote brackets">
+<dt class="label" id="id5"><span class="brackets">1</span><span class="fn-backref">(<a href="#id1">1</a>,<a href="#id4">2</a>)</span></dt>
+<dd><p>Default provided.</p>
+</dd>
+<dt class="label" id="id6"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dd><p>The variable is only evaluated when the tags <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_start_instance</span></code> or <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_start_services</span></code> are set.</p>
+</dd>
+<dt class="label" id="id7"><span class="brackets"><a class="fn-backref" href="#id3">3</a></span></dt>
+<dd><p>The variable is only evaluated when the tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_start_instance</span></code> is set. If the variable is omitted, all instances of the specified SAP system ID will be started.</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="defaults">
+<h2><a class="toc-backref" href="#id12">Defaults</a><a class="headerlink" href="#defaults" title="Permalink to this headline"></a></h2>
+<p>Suggested default values are provided in defaults/main.yml:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 59%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">startsap_dir_sapctrl_managednode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;/usr/sap/hostctrl/exe&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">startsap_input_waitforstarted</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;1200&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">startsap_ordered_list_instance_types</span></code></p></td>
+<td><p>For internal use only</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="dependencies">
+<h2><a class="toc-backref" href="#id13">Dependencies</a><a class="headerlink" href="#dependencies" title="Permalink to this headline"></a></h2>
+<p>None.</p>
+</section>
+<section id="example-playbook">
+<h2><a class="toc-backref" href="#id14">Example Playbook</a><a class="headerlink" href="#example-playbook" title="Permalink to this headline"></a></h2>
+<p>The example playbook is based on the assumption that a configuration file and an inventory file with contents similar to the <a class="reference internal" href="install_and_config.html#ibm-ansible-for-i-sap-docsite-install-and-config-configuration"><span class="std std-ref">configuration documentation</span></a> exist in the current directory. The SAP start services for SAP system PRD are active. The example playbook in the current directory is named start_sap.yml and has the following contents:</p>
+<div class="highlight-YAML notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ibmi_servers</span><span class="w"></span>
+<span class="w">  </span><span class="nt">vars</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">startsap_input_sap_sid</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;PRD&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">roles</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ansible_dir&gt;/roles/start_sap</span><span class="w"></span>
+</pre></div>
+</div>
+<p>To execute this playbook, enter the command:</p>
+<div class="highlight-YAML notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ansible-playbook --verbose start_sap.yml -t sap_start_instance</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
+<section id="license">
+<h2><a class="toc-backref" href="#id15">License</a><a class="headerlink" href="#license" title="Permalink to this headline"></a></h2>
+<p>This collection is licensed under the <a class="reference external" href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 license</a>.</p>
+</section>
+<section id="author-information">
+<h2><a class="toc-backref" href="#id16">Author Information</a><a class="headerlink" href="#author-information" title="Permalink to this headline"></a></h2>
+<p>SAP on IBM Power Development Team</p>
+</section>
+<section id="copyright">
+<h2><a class="toc-backref" href="#id17">Copyright</a><a class="headerlink" href="#copyright" title="Permalink to this headline"></a></h2>
+<p>Copyright IBM Corporation 2021,2022</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="sap_opsyscheck.html" class="btn btn-neutral float-left" title="Role sap_opsyscheck" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="stop_sap.html" class="btn btn-neutral float-right" title="Role stop_sap" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021,2022, IBM.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
