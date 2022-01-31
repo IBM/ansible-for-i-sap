@@ -1,5 +1,5 @@
 ---
-#   Copyright 2021 IBM Corporation
+#   Copyright 2022 IBM Corporation
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -15,15 +15,15 @@
 
 - name: Create script directory
   file:
-    path: "{{ kernel_upgrade_dir }}"
+    path: "{{ upgsapkrn_dir_temp_script_managednode }}"
     state: directory
 
 - name: Generate script clwrapper.sh
   template:
     src: clwrapper.sh.j2
-    dest: "{{ kernel_upgrade_dir }}/clwrapper.sh"
+    dest: "{{ upgsapkrn_dir_temp_script_managednode }}/clwrapper.sh"
     mode: 0755
 
 - name: Create Timestamp for LOG file name
   ansible.builtin.set_fact:
-    sap_kernel_upgrade_log_timestamp: "{{ ansible_date_time.iso8601_basic_short }}.log"
+    upgsapkrn_timestamp_for_logfile: "{{ ansible_date_time.iso8601_basic_short }}.log"

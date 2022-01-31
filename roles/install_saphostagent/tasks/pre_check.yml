@@ -1,5 +1,5 @@
 ---
-#   Copyright 2021 IBM Corporation
+#   Copyright 2022 IBM Corporation
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -24,11 +24,11 @@
 - name: Check if R3GROUP on {{ inventory_hostname }} already exists
   shell:
     cmd: 'system DSPUSRPRF R3GROUP | grep CPF2204 | cat'
-  register: sap_r3group_check
+  register: insshagnt_bool_r3group_exists
 
 - name: Unable to retrieve R3GROUP profile data on {{ inventory_hostname }}
   fail:
-    msg: "Error: R3GROUP is missing and GID is not specified"
+    msg: "Error: User profile R3GROUP does not exist and parameter GID is not specified"
   when:
-    - sap_gid is undefined
-    - sap_r3group_check.stderr != ""
+    - insshagnt_r3group_gid is undefined
+    - insshagnt_bool_r3group_exists.stderr != ""

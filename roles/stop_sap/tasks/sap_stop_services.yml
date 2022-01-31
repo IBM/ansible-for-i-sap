@@ -1,0 +1,110 @@
+---
+#   Copyright 2022 IBM Corporation
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+###########################################
+# tasks file for sap_stop_services
+###########################################
+
+###########################################
+# Check Input from playbook
+###########################################
+
+- name: Check if stopsap_input_sap_sid variable provided
+  fail:
+    msg: "Error: Input parameter stopsap_input_sap_sid is required."
+  when:  stopsap_input_sap_sid is undefined
+
+###########################################
+# Check specified SAP services
+###########################################
+
+- name: Check {{ stopsap_input_sap_sid }} in /usr/sap/sapservices
+  shell:  "grep sapstartsrv /usr/sap/sapservices | grep -v '^ *#' | grep {{ item }}"
+  with_items: "{{ stopsap_input_sap_sid }}"
+  register: stopsap_list_sap_services
+  when: stopsap_input_sap_sid != "*"
+
+- name: Check {{ stopsap_input_sap_sid }} in /usr/sap/sapservices
+  shell:  "grep sapstartsrv /usr/sap/sapservices | grep -v '^ *#'"
+  register: stopsap_list_sap_services
+  when: stopsap_input_sap_sid == "*"
+
+- name: Error if {{ stopsap_input_sap_sid }} or sapstartsrv was not found in /usr/sap/sapservices
+  fail:
+    msg: "Error: System {{ stopsap_input_sap_sid  }} does not exist or sapstartsrv was not found."
+  when: stopsap_list_sap_services == ""
+
+- name: Search profile name for {{ stopsap_input_sap_sid }} in /usr/sap/sapservices
+  shell:  "grep {{ stopsap_input_sap_sid }} /usr/sap/sapservices | grep -v '^ *#' | cut -f2 -d' '"
+  register: stopsap_list_sap_services
+  when: stopsap_input_sap_sid != "*"
+
+- name: Set variable for profile name
+  set_fact:
+    stopsap_list_sap_services_output:  "{{ stopsap_list_sap_services.stdout_lines }}"
+  when: stopsap_input_sap_sid != "*"
+
+- name: Search profile name for {{ stopsap_input_sap_sid }} in /usr/sap/sapservices
+  shell:  "grep sapstartsrv /usr/sap/sapservices | grep -v '^ *#' | cut -f2 -d' '"
+  register: stopsap_list_sap_all_services
+  when: stopsap_input_sap_sid == "*"
+
+- name: Set variable for profile name
+  set_fact:
+    stopsap_list_sap_services_output:  "{{ stopsap_list_sap_all_services.stdout_lines }}"
+  when: stopsap_input_sap_sid == "*"
+
+- name: Get instance number from profile name
+  shell: grep -w 'SAPSYSTEM'  {{ item|replace('pf=', '') }}
+  with_items: "{{ stopsap_list_sap_services.stdout_lines }}"
+  register: stopsap_sap_sid_profile_name
+
+######################################################
+# Display SAP stop commands
+######################################################
+
+- name: Show stop SAP Service command
+  debug:
+    msg: "SAP stop command - {{ stopsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ stopsap_sap_sid_profile_name.stdout.split()[2] }} -function StopService {{ item }}"
+  with_items: "{{ stopsap_input_sap_sid }}"
+  when: stopsap_input_sap_sid | int >= 1
+
+- name: Show stop SAP Service command
+  debug:
+    msg: "SAP stop command - {{ stopsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ item.stdout.split()[2] }} -function StopService {{ stopsap_input_sap_sid }}"
+  with_items: "{{ stopsap_sap_sid_profile_name.results }}"
+  when: stopsap_input_sap_sid | int <2
+  
+######################################################
+# Start SAP Services
+######################################################
+
+- name: Stop SAP service
+  command: "{{ stopsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ stopsap_sap_sid_profile_name.stdout.split()[2] }} -function StopService {{ item }}"
+  environment:
+    LIBPATH: "{{ stopsap_dir_sapctrl_managednode }}"
+  args:
+    chdir: "{{ stopsap_dir_sapctrl_managednode }}"
+  with_items: "{{ stopsap_input_sap_sid }}"
+  when: stopsap_input_sap_sid | int >= 1
+
+- name: Stop SAP service
+  command: "{{ stopsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ item.stdout.split()[2] }} -function StopService {{ stopsap_input_sap_sid }}"
+  environment:
+    LIBPATH: "{{ stopsap_dir_sapctrl_managednode }}"
+  args:
+    chdir: "{{ stopsap_dir_sapctrl_managednode }}"
+  with_items: "{{ stopsap_sap_sid_profile_name.results }}"
+  when: stopsap_input_sap_sid | int <2

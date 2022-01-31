@@ -1,0 +1,82 @@
+---
+#   Copyright 2022 IBM Corporation
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+#########################################################
+# Upgrade Kernel
+#########################################################
+
+- name: Execute kernel upgrade through ILE mode TEST
+  shell:
+    cmd: |
+        cat <<EOF | /bin/sh {{ upgsapkrn_dir_temp_script_managednode }}/clwrapper.sh
+        MONMSG MSGID(CPF0000)
+        ADDENVVAR ENVVAR('QIBM_USE_DESCRIPTOR_STDIO') +
+        VALUE('N') REPLACE(*YES)
+        ADDLIBLE LIB(SAP{{ upgsapkrn_input_sap_sid }}IND)
+        SAP{{ upgsapkrn_input_sap_sid }}IND/APYSIDKRN SID({{ upgsapkrn_input_sap_sid }}) +
+        ARCHIVES('{{ upgsapkrn_dir_download_managednode }}/*') +
+        LOGPATH('/sapmnt/{{ upgsapkrn_input_sap_sid }}/patches/log/krnl_upg_test_log_{{ upgsapkrn_timestamp_for_logfile }}') +
+        MODE(*TEST)
+        EOF
+  register: upgsapkrn_cmd_apysidkrn_test
+
+- name: Check Success in log file /sapmnt/{{ upgsapkrn_input_sap_sid }}/patches/log/krnl_upg_test_log_{{ upgsapkrn_timestamp_for_logfile }}
+  shell: "grep 'Process finished successfully' /sapmnt/{{ upgsapkrn_input_sap_sid }}/patches/log/krnl_upg_test_log_{{ upgsapkrn_timestamp_for_logfile }}"
+  register: upgsapkrn_log_success_messages
+
+- name: No Success in log file
+  fail:
+    msg: "Error: Please check the log file: /sapmnt/{{ upgsapkrn_input_sap_sid }}/patches/log/krnl_upg_test_log_{{ upgsapkrn_timestamp_for_logfile }}"
+  when: upgsapkrn_log_success_messages == ""
+
+- name: Display error
+  debug:
+    msg: "{{ upgsapkrn_cmd_apysidkrn_test.stderr_lines }}"
+
+- name: Display Output
+  debug:
+    msg: "{{ upgsapkrn_cmd_apysidkrn_test.stdout_lines }}"
+
+- name: Execute kernel upgrade through ILE mode ADD
+  shell:
+    cmd: |
+        cat <<EOF | /bin/sh {{ upgsapkrn_dir_temp_script_managednode }}/clwrapper.sh
+        MONMSG MSGID(CPF0000)
+        ADDENVVAR ENVVAR('QIBM_USE_DESCRIPTOR_STDIO') +
+        VALUE('N') REPLACE(*YES)
+        ADDLIBLE LIB(SAP{{ upgsapkrn_input_sap_sid }}IND)
+        SAP{{ upgsapkrn_input_sap_sid }}IND/APYSIDKRN SID({{ upgsapkrn_input_sap_sid }}) +
+        ARCHIVES('{{ upgsapkrn_dir_download_managednode }}/*') +
+        LOGPATH('/sapmnt/{{ upgsapkrn_input_sap_sid }}/patches/log/krnl_upg_add_log_{{ upgsapkrn_timestamp_for_logfile }}') +
+        MODE(*ADD)
+        EOF
+  register: upgsapkrn_cmd_apysidkrn_add
+
+- name: Check Success in log file /sapmnt/{{ upgsapkrn_input_sap_sid }}/patches/log/krnl_upg_add_log_{{ upgsapkrn_timestamp_for_logfile }}
+  shell: "grep 'Process finished successfully' /sapmnt/{{ upgsapkrn_input_sap_sid }}/patches/log/krnl_upg_add_log_{{ upgsapkrn_timestamp_for_logfile }}"
+  register: upgsapkrn_log_success_messages
+
+- name: No Success in log file
+  fail:
+    msg: "Error: Please check the log file: /sapmnt/{{ upgsapkrn_input_sap_sid }}/patches/log/krnl_upg_add_log_{{ upgsapkrn_timestamp_for_logfile }}"
+  when: upgsapkrn_log_success_messages == ""
+
+- name: Display error
+  debug:
+    msg: "{{ upgsapkrn_cmd_apysidkrn_add.stderr_lines }}"
+
+- name: Display Output
+  debug:
+    msg: "{{ upgsapkrn_cmd_apysidkrn_add.stdout_lines }}"

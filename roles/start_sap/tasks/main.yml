@@ -1,5 +1,5 @@
 ---
-#   Copyright 2021 IBM Corporation
+#   Copyright 2022 IBM Corporation
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -18,7 +18,19 @@
 # start pre task
 - name: SAP Start pre task
   import_tasks: sap_start_pre.yml
+  tags: sap_start_instance
 
 # start Instance
 - name: Start Instance
-  import_tasks: sap_startInstance.yml
+  import_tasks: sap_start_instance.yml
+  tags: sap_start_instance
+  
+# start All Instances
+- name: Start All Instances
+  import_tasks: sap_start_all_instances.yml
+  tags: never,sap_start_all_instances
+
+# start Service
+- name: Start Service
+  import_tasks: sap_start_services.yml
+  tags: never,sap_start_services

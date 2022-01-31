@@ -1,5 +1,5 @@
 ---
-#   Copyright 2021 IBM Corporation
+#   Copyright 2022 IBM Corporation
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -21,104 +21,114 @@
 # Check SAP sid
 ###########################################
 
-- name: Check sap_sid variable
+- name: Check if stopsap_input_sap_sid variable is provided
   fail:
-    msg: "Error: sap_sid is undefined. Please define in the playbook"
-  when:  sap_sid is undefined
+    msg: "Error: Input parameter stopsap_input_sap_sid is required."
+  when:  stopsap_input_sap_sid is undefined
 
 ###########################################
 # Check SAP Service
 ###########################################
 
-- name: Check SAP Services
-  shell:  "grep {{ sap_sid }} /usr/sap/sapservices | grep -v '#' | grep {{ item }} | cut -f2 -d' '"
-  loop: "{{ instance_order}}"
-  register: check_sap_service
-  when: (check_sap_service is undefined) or (check_sap_service.stdout == "")
+- name: Search profile name for {{ stopsap_input_sap_sid }} in /usr/sap/sapservices
+  shell:  "grep {{ stopsap_input_sap_sid }} /usr/sap/sapservices | grep -v '^ *#' | grep {{ item }} | cut -f2 -d' '"
+  loop: "{{ stopsap_ordered_list_instance_types}}"
+  register: stopsap_list_sap_services
+  when: (stopsap_list_sap_services is undefined) or (stopsap_list_sap_services.stdout == "")
 
 - name: Set variable for SAP service profile
   set_fact:
-    check_sap_service: "{{ item.stdout }}"
+    stopsap_list_sap_services: "{{ item.stdout }}"
   when: item.changed
-  with_items: "{{ check_sap_service.results }}"
-
-- name: Fail if SAP Service does not exist
+  with_items: "{{ stopsap_list_sap_services.results }}"
+  
+- name: Error if {{ stopsap_input_sap_sid }} was not found in /usr/sap/sapservices
   fail:
-    msg: System {{ sap_sid  }} does not exist.
-  when: check_sap_service == ""
-  
-###########################################
-# Get if there is any running service
-###########################################
-  
-- name: Get sid from profile
-  shell: grep -w 'SAPSYSTEM'  {{ check_sap_service|replace('pf=', '') }}
-  register: sap_sid_profile
+    msg: "Error: SAP system {{ stopsap_input_sap_sid }} not found."
+  when: stopsap_list_sap_services == ""
 
-- name: Check running SAP instances for sap_nr
-  shell: "{{ sapctr_exe_dir }}/sapcontrol -nr {{ sap_sid_profile.stdout.split()[2] }} -function GetSystemInstanceList | grep {{ ansible_nodename }} | grep -i green | sort -k 5nr | grep {{ sap_nr | default() }}"
+- name: Check  sap_nr {{ stopsap_input_sap_instance_nr }}
+  shell: "grep {{ stopsap_input_sap_sid }} /usr/sap/sapservices | grep -v '^ *#' | grep {{ stopsap_input_sap_instance_nr }}"
+  register: stopsap_check_sap_instance
+  failed_when: stopsap_check_sap_instance.rc >= 2
+  when: stopsap_input_sap_instance_nr is defined
+
+- name: Error if {{ stopsap_input_sap_instance_nr }} was not found
+  fail:
+    msg: "Error: Instance {{ stopsap_input_sap_instance_nr }} for {{ stopsap_input_sap_sid  }} does not exist."
+  failed_when: stopsap_check_sap_instance.stdout == ""
+  when: stopsap_input_sap_instance_nr is defined
+  
+###########################################
+# Check if there is any running service
+###########################################
+  
+- name: Get one instance number from profile name
+  shell: grep -w 'SAPSYSTEM'  {{ stopsap_list_sap_services|replace('pf=', '') }}
+  register: stopsap_sap_sid_profile_name
+
+- name: Check if SAP instance is active
+  shell: "{{ stopsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ stopsap_sap_sid_profile_name.stdout.split()[2] }} -function GetSystemInstanceList | grep {{ ansible_nodename }} | grep -i green | sort -k 5nr | grep {{ stopsap_input_sap_instance_nr | default() }}"
   environment:
-    LIBPATH: "{{ sapctr_exe_dir }}"
-  failed_when: result_rid_sap_nr.rc >= 2
-  register: result_rid_sap_nr
-  when:  sap_nr is defined
+    LIBPATH: "{{ stopsap_dir_sapctrl_managednode }}"
+  failed_when: stopsap_output_selected_active_instance.rc >= 2
+  register: stopsap_output_selected_active_instance
+  when: stopsap_input_sap_instance_nr is defined
 
 - name: Fail if SAP Service already stopped for sap_nr
   fail:
     msg: "Error: No running SAP Instances found"
-  failed_when: result_rid_sap_nr.stdout == ""
-  when:  sap_nr is defined
+  failed_when: stopsap_output_selected_active_instance.stdout == ""
+  when:  stopsap_input_sap_instance_nr is defined
 
 - name: Fail if SAP Service cannot connect for sap_nr
   fail:
     msg: "GetSystemInstanceList Fail: NIECONN_REFUSED (Connection refused)"
-  failed_when: result_rid_sap_nr.stdout_lines == "FAIL"
-  when:  sap_nr is defined
-
-- name: Set variable for running instances for sap_nr
+  failed_when: stopsap_output_selected_active_instance.stdout_lines == "FAIL"
+  when:  stopsap_input_sap_instance_nr is defined
+  
+- name: Set variable for active SAP instance
   set_fact:
-    running_sap_nr:  "{{ result_rid_sap_nr.stdout_lines }}"
-  when:  sap_nr is defined
-
-- name: Check all running SAP instances
-  shell: "{{ sapctr_exe_dir }}/sapcontrol -nr {{ sap_sid_profile.stdout.split()[2] }} -function GetSystemInstanceList | grep -i green | sort -k 5nr"
+    stopsap_list_instances_to_stop:  "{{ stopsap_output_selected_active_instance.stdout_lines }}"
+  when:  stopsap_input_sap_instance_nr is defined
+  
+- name: Get list of active SAP instances
+  shell: "{{ stopsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ stopsap_sap_sid_profile_name.stdout.split()[2] }} -function GetSystemInstanceList | grep -i green | sort -k 5nr"
   environment:
-    LIBPATH: "{{ sapctr_exe_dir }}"
-  failed_when: result_rid.rc >= 2
-  register: result_rid
-  when:  sap_nr is undefined
+    LIBPATH: "{{ stopsap_dir_sapctrl_managednode }}"
+  failed_when: stopsap_output_selected_active_instance.rc >= 2
+  register: stopsap_output_selected_active_instance
+  when:  stopsap_input_sap_instance_nr is undefined
 
-- name: Fail if SAP Service already stopped
+- name: Set variable for active SAP instance
+  set_fact:
+    stopsap_list_instances_to_stop:  "{{ stopsap_output_selected_active_instance.stdout_lines }}"
+  when:  stopsap_input_sap_instance_nr is undefined
+  
+- name: Error, if SAP instance is not active
   fail:
-    msg: "Error: No running SAP Instances found"
-  failed_when: result_rid.stdout == ""
-  when:  sap_nr is undefined
+    msg: "Error: No SAP instances found for SAP system {{ stopsap_input_sap_sid }}"
+  failed_when: stopsap_list_instances_to_stop == ""
+  when:  stopsap_input_sap_instance_nr is undefined
 
-- name: Fail if SAP Service cannot connect
+- name: Error if connection to sapstartsrv failed
   fail:
     msg: "GetSystemInstanceList Fail: NIECONN_REFUSED (Connection refused)"
-  failed_when: result_rid.stdout_lines == "FAIL"
-  when:  sap_nr is undefined
-
-- name: Set variable for running instances
-  set_fact:
-    running_sap_nr:  "{{ result_rid.stdout_lines }}"
-  when:  sap_nr is undefined
+  failed_when: stopsap_list_instances_to_stop == "FAIL"
+  when:  stopsap_input_sap_instance_nr is undefined
 
 ######################################################
 # Display SAP stop commands
 ######################################################
 
-- name: Display SAP Stop Instance command
+- name: Show stop SAP instance command
   debug:
-    msg: "SAP stop command - {{ sapctr_exe_dir }}/sapcontrol -nr {{ sap_sid_profile.stdout.split()[2] }} -function InstanceStop {{ item.split()[0]|replace(',', '') }} {{ sap_nr | default(item.split()[1]|replace(',', '')) }}{{ sap_softtimeout }}"
-  with_items: "{{ running_sap_nr }}"
-  when:  sap_nr is defined
+    msg: "SAP stop command - {{ stopsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ stopsap_sap_sid_profile_name.stdout.split()[2] }} -function InstanceStop {{ item.split()[0]|replace(',', '') }} {{ stopsap_input_sap_instance_nr | default(item.split()[1]|replace(',', '')) }} {{ stopsap_softtimeout }}"
+  with_items: "{{ stopsap_list_instances_to_stop }}"
+  when:  stopsap_input_sap_instance_nr is defined
 
-- name: Display SAP Stop All Instance command
+- name: Show stop SAP instance command for all instances
   debug:
-    msg: "SAP stop command - {{ sapctr_exe_dir }}/sapcontrol -nr {{ sap_sid_profile.stdout.split()[2] }} -function InstanceStop {{ item.split()[0]|replace(',', '') }} {{ item.split()[1]|replace(',', '') }} {{ sap_softtimeout }}"
-  with_items: "{{ running_sap_nr }}"
-  when:  sap_nr is undefined
-
-
+    msg: "SAP stop command - {{ stopsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ stopsap_sap_sid_profile_name.stdout.split()[2] }} -function InstanceStop {{ item.split()[0]|replace(',', '') }} {{ item.split()[1]|replace(',', '') }} {{ stopsap_softtimeout }}"
+  with_items: "{{ stopsap_list_instances_to_stop }}"
+  when:  stopsap_input_sap_instance_nr is undefined

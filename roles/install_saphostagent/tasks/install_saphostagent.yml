@@ -1,5 +1,5 @@
 ---
-#   Copyright 2021 IBM Corporation
+#   Copyright 2022 IBM Corporation
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@
 # Prepare target temp dir
 ############################################
 
-- name: Ensure directory {{ sap_hostagent_agent_tmp_directory }} exists
+- name: Ensure directory {{ insshagnt_dir_temp_managednode }} exists
   file:
-    path: "{{ sap_hostagent_agent_tmp_directory }}"
+    path: "{{ insshagnt_dir_temp_managednode }}"
     state: directory
     mode: '0755'
 
@@ -31,37 +31,37 @@
 # Check SAPHOSTAGENT file
 #####################################################
 
-- name: Collect downloaded SAPHOSTAGENT files from {{ sap_hostagent_download_local_path }} directory
+- name: Search for SAR files in {{ insshagnt_dir_download_managednode }} directory
   find:
-    paths: "{{ sap_hostagent_download_local_path }}"
-    patterns: "*.SAR,*.sar"
-  register: sap_hostagent_sar_file_name_found
-  when: sap_hostagent_sar_file_name is undefined
+    paths: "{{ insshagnt_dir_download_managednode }}"
+    patterns: "SAPHOSTAGENT*.SAR,saphostagent*.sar"
+  register: insshagnt_bool_saphostagent_sar_found
+  when: insshagnt_input_file_saphostagent_sar is undefined
 
-- name: Check downloaded SAPHOSTAGENT file(s) found in {{ sap_hostagent_download_local_path }} directory
+- name: Error if no SAR file specified or found
   fail:
-    msg: "Error: No SAPHOSTAGENT SAR file(s) found in {{ sap_hostagent_download_local_path }} directory"
-  when: sap_hostagent_sar_file_name is undefined and sap_hostagent_sar_file_name_found.files|length == 0
+    msg: "Error: No SAPHOSTAGENT SAR file(s) found in {{ insshagnt_dir_download_managednode }} directory"
+  when: insshagnt_input_file_saphostagent_sar is undefined and insshagnt_bool_saphostagent_sar_found.files|length == 0
 
-- name: Get last downloaded SAPHOSTAGENT file
+- name: Select latest of multiple SAR files
   ansible.builtin.set_fact:
-    sap_hostagent_sar_file: "{{ sap_hostagent_sar_file_name_found.files | sort(attribute='path') | last }}"
-  when: sap_hostagent_sar_file_name is undefined
+    insshagnt_file_saphostagent_sar: "{{ insshagnt_bool_saphostagent_sar_found.files | sort(attribute='path') | last }}"
+  when: insshagnt_input_file_saphostagent_sar is undefined
 
 - name: Set SAPHOSTAGENT filename variable
   ansible.builtin.set_fact:
-    sap_hostagent_sar_file_name: "{{ sap_hostagent_sar_file.path | basename }}"
-  when: sap_hostagent_sar_file_name is undefined
+    insshagnt_input_file_saphostagent_sar: "{{ insshagnt_file_saphostagent_sar.path | basename }}"
+  when: insshagnt_input_file_saphostagent_sar is undefined
 
-- name: Check SAPHOSTAGENT file {{ sap_hostagent_sar_file_name }}
+- name: Error if no SAPHOSTAGENT SAR found
   fail:
-    msg: "Error: SAPHOSTAGENT not found"
-  when: sap_hostagent_sar_file_name == ""
+    msg: "Error: SAPHOSTAGENT SAR file neither specified nor found in directory {{ insshagnt_dir_download_managednode }}"
+  when: insshagnt_input_file_saphostagent_sar == ""
 
-- name: Copy SAR based SAPHOSTAGENT [{{ sap_hostagent_sar_file_name }}] to the {{ sap_hostagent_agent_tmp_directory }} folder
+- name: Copy SAR based SAPHOSTAGENT [{{ insshagnt_input_file_saphostagent_sar }}] to the {{ insshagnt_dir_temp_managednode }} folder
   copy:
-    src: "{{ sap_hostagent_download_local_path }}/{{ sap_hostagent_sar_file_name }}"
-    dest: "{{ sap_hostagent_agent_tmp_directory }}/{{ sap_hostagent_sar_file_name }}"
+    src: "{{ insshagnt_dir_download_managednode }}/{{ insshagnt_input_file_saphostagent_sar }}"
+    dest: "{{ insshagnt_dir_temp_managednode }}/{{ insshagnt_input_file_saphostagent_sar }}"
     remote_src: yes
 
 #########################################################
@@ -70,72 +70,78 @@
 
 ### Workflow:
 ###   SAPCAR:
-###   Check SAPCAR (sap_hostagent_sapcar_file_name)
-###    -   in sap_hostagent_download_local_path -> use it
-###    -   available in sap_hostagent_download_local_path
-###        available in sap_sapcar_local_path_default -> use it
+###   Check SAPCAR (insshagnt_file_sapcar)
+###    -   in insshagnt_dir_download_managednode -> use it
+###    -   available in insshagnt_dir_download_managednode
+###        available in insshagnt_dir_sapcar_default_managednode -> use it
 ###    -   available in both dir -> end playbook
 
-- name: Check SAPCAR in {{ sap_hostagent_download_local_path }} folder
+- name: Search for SAPCAR in {{ insshagnt_dir_download_managednode }} directory
   ansible.builtin.stat:
-    path: "{{ sap_hostagent_download_local_path }}/{{ sap_hostagent_sapcar_file_name }}"
-  register: stat_result
+    path: "{{ insshagnt_dir_download_managednode }}/{{ insshagnt_file_sapcar }}"
+  register: insshagnt_stat_output
 
-- name: Set SAPCAR path variable
+- name: If found, set SAPCAR path variable
   ansible.builtin.set_fact:
-    sap_sapcar_local_path: "{{ sap_hostagent_download_local_path }}"
-  when: ( stat_result.stat.exists == true ) and ( stat_result.stat.executable == true )
+    insshagnt_dir_sapcar_managednode: "{{ insshagnt_dir_download_managednode }}"
+  when: ( insshagnt_stat_output.stat.exists == true ) and ( insshagnt_stat_output.stat.executable == true )
 
-
-- name: Check SAPCAR in {{ sap_sapcar_local_path_default }} folder
+- name: Search SAPCAR in {{ insshagnt_dir_sapcar_default_managednode }} folder
   ansible.builtin.stat:
-    path: "{{ sap_sapcar_local_path_default }}/{{ sap_hostagent_sapcar_file_name }}"
-  register: stat_result
-  when: sap_sapcar_local_path is undefined
+    path: "{{ insshagnt_dir_sapcar_default_managednode }}/{{ insshagnt_file_sapcar }}"
+  register: insshagnt_stat_output
+  when: insshagnt_dir_sapcar_managednode is undefined
 
-- name: Set SAPCAR path variable to default
+- name: If found, set SAPCAR path variable to default
   ansible.builtin.set_fact:
-    sap_sapcar_local_path: "{{ sap_sapcar_local_path_default }}"
-  when: ( sap_sapcar_local_path is undefined ) and ( stat_result.stat.exists == true ) and ( stat_result.stat.executable == true )
+    insshagnt_dir_sapcar_managednode: "{{ insshagnt_dir_sapcar_default_managednode }}"
+  when: ( insshagnt_dir_sapcar_managednode is undefined ) and ( insshagnt_stat_output.stat.exists == true ) and ( insshagnt_stat_output.stat.executable == true )
 
-
-- name: Terminate if SAPCAR file not found
+- name: Error if no SAPCAR file found
   fail:
-    msg: "Error: {{ sap_hostagent_sapcar_file_name }} not found, neither in {{ sap_hostagent_download_local_path }}, nor in {{ sap_sapcar_local_path_default }}"
-  when: sap_sapcar_local_path is undefined
-
+    msg: "Error: {{ insshagnt_file_sapcar }} not found in {{ insshagnt_dir_download_managednode }} or in {{ insshagnt_dir_sapcar_default_managednode }}"
+  when: insshagnt_dir_sapcar_managednode is undefined
 
 ######################################################
 # Extract and install SAPHOSTAGENT on target host
 #######################################################
 
+- name: Stop SAP Database Collector for IBM i if active
+  shell:
+    cmd: system "CALL PGM(R3SAP400/DB4STATS) PARM('*STOP')" | cat
+  register: insshagnt_db4stats_stop_output
+    
 - name: Extract the SAPHOSTAGENT archive using SAPCAR
   command: >-
-    {{ sap_sapcar_local_path }}/{{ sap_hostagent_sapcar_file_name }} \
-    -xvf {{ sap_hostagent_agent_tmp_directory }}/{{ sap_hostagent_sar_file_name }} -manifest SIGNATURE.SMF
-  register: extractagent
+    {{ insshagnt_dir_sapcar_managednode }}/{{ insshagnt_file_sapcar }} \
+    -xvf {{ insshagnt_dir_temp_managednode }}/{{ insshagnt_input_file_saphostagent_sar }} -manifest SIGNATURE.SMF
+  register: insshagnt_cmd_extract_sar
   args:
-    chdir: "{{ sap_hostagent_agent_tmp_directory }}"
-  changed_when: "'SAPCAR: processing archive' in extractagent.stdout"
+    chdir: "{{ insshagnt_dir_temp_managednode }}"
+  changed_when: "'SAPCAR: processing archive' in insshagnt_cmd_extract_sar.stdout"
 
 - name: Prepare SAPHOSTAGENT install command argument
   ansible.builtin.set_fact:
-    sap_hostagent_agent_command_args: "-gid {{ sap_gid }}"
+    insshagnt_install_cmd_args: "-gid {{ insshagnt_r3group_gid }}"
   when:
-    - sap_gid is defined
-    - sap_r3group_check.stderr != ""
+    - insshagnt_r3group_gid is defined
+    - insshagnt_bool_r3group_exists.stderr != ""
 
-- name: Install SAPHOSTAGENT with command argument {{ sap_hostagent_agent_command_args }}
-  command: "{{ sap_hostagent_agent_tmp_directory }}/saphostexec -install {{ sap_hostagent_agent_command_args }}"
-  register: installagent
+- name: Install SAPHOSTAGENT with command argument {{ insshagnt_install_cmd_args }}
+  command: "{{ insshagnt_dir_temp_managednode }}/saphostexec -install {{ insshagnt_install_cmd_args }}"
+  register: insshagnt_cmd_install_saphostagent
   args:
-    chdir: "{{ sap_hostagent_agent_tmp_directory }}"
-  changed_when: "'Install service' in installagent.stdout"
+    chdir: "{{ insshagnt_dir_temp_managednode }}"
+  changed_when: "'Install service' in insshagnt_cmd_install_saphostagent.stdout"
 
-- name: Ensure {{ sap_hostagent_agent_tmp_directory }} directory is removed from {{ inventory_hostname }}
+- name: Start SAP Database Collector for IBM i if configured
+  shell:
+    cmd: system "CALL PGM(R3SAP400/SAPINIT) PARM('-g')" | cat
+  register: insshagnt_sapinit_output
+
+- name: Ensure {{ insshagnt_dir_temp_managednode }} directory is removed from {{ inventory_hostname }}
   file:
-    path: "{{ sap_hostagent_agent_tmp_directory }}"
+    path: "{{ insshagnt_dir_temp_managednode }}"
     state: absent
     mode: '0755'
-  when: sap_hostagent_clean_tmp_directory
-
+  when: insshagnt_bool_clean_dir_temp_managednode

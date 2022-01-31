@@ -1,5 +1,5 @@
 ---
-#   Copyright 2021 IBM Corporation
+#   Copyright 2022 IBM Corporation
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -17,14 +17,18 @@
 
 - name: Prepare SAP kernel upgrade
   import_tasks: sap_kernel_upgrade_prep.yml
-  tags: sap_kernel_upgrade
+  tags: sap_kernel_upgrade_same_release,sap_kernel_upgrade_new_release
 
 - name: Upgrade SAP kernel in the same release
-  import_tasks: sap_kernel_upgrade_same_rel.yml
-  when: release_switch == False
-  tags: sap_kernel_upgrade
+  import_tasks: sap_kernel_upgrade_same_rel_add.yml
+  when: upgsapkrn_input_upgrade_mode == "ADD"
+  tags: sap_kernel_upgrade_same_release
+  
+- name: Upgrade SAP kernel in the same release
+  import_tasks: sap_kernel_upgrade_same_rel_fully.yml
+  when: upgsapkrn_input_upgrade_mode == "FULLY"
+  tags: sap_kernel_upgrade_same_release
 
 - name: Upgrade SAP kernel to a higher release
   import_tasks: sap_kernel_upgrade_new_rel.yml
-  when: release_switch == True
-  tags: sap_kernel_upgrade
+  tags: never,sap_kernel_upgrade_new_release

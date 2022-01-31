@@ -1,5 +1,5 @@
 ---
-#   Copyright 2021 IBM Corporation
+#   Copyright 2022 IBM Corporation
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -14,12 +14,14 @@
 #   limitations under the License.
 
 # defaults file for start_sap
-sapctr_exe_dir: "/usr/sap/hostctrl/exe"
+startsap_dir_sapctrl_managednode: "/usr/sap/hostctrl/exe"
 # FOR INTERNAL USE:
-instance_order:
+startsap_ordered_list_instance_types:
   - ASCS
   - SCS
   - DVEBMGS
   - D
   - J
   - JC
+startsap_sapstartsrv_user: "{{ startsap_input_sap_sid | lower }}adm"
+startsap_input_waitforstarted: "1200"

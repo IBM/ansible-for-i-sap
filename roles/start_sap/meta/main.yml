@@ -1,6 +1,6 @@
 galaxy_info:
   author: Csaba Fuchs
-  description: Start SAP instances
+  description: Start SAP system
   company: IBM Corporation
 
   # If the issue tracker for your role is not on github, uncomment the
@@ -56,7 +56,7 @@ galaxy_info:
     - ibm
     - power
     - ibmi
-    - sap  
+    - sap
 
 dependencies: []
   # List your role dependencies here, one per line. Be sure to remove the '[]' above,

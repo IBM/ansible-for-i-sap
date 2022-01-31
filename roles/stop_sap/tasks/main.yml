@@ -1,5 +1,5 @@
 ---
-#   Copyright 2021 IBM Corporation
+#   Copyright 2022 IBM Corporation
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -18,7 +18,19 @@
 # stop pre task
 - name: SAP Stop pre task
   import_tasks: sap_stop_pre.yml
+  tags: sap_stop_instance
 
 # stop Instance
 - name: Stop Instance
-  import_tasks: sap_stopInstance.yml
+  import_tasks: sap_stop_instance.yml
+  tags: sap_stop_instance
+
+# stop All Instances
+- name: Stop All Instances
+  import_tasks: sap_stop_all_instances.yml
+  tags: never,sap_stop_all_instances
+  
+# stop Service
+- name: Stop Service
+  import_tasks: sap_stop_services.yml
+  tags: never,sap_stop_services

@@ -1,0 +1,113 @@
+---
+#   Copyright 2022 IBM Corporation
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+###########################################
+# tasks file for sap_start_all_instances
+###########################################
+
+###########################################
+# Check all SAP instances
+###########################################
+
+- name: Search profile name for all sap instances in /usr/sap/sapservices
+  shell:  "grep sapstartsrv /usr/sap/sapservices | grep -v '^ *#' | cut -f2 -d' '"
+  register: startsap_list_sap_services
+
+- name: Set variable for start command
+  set_fact:
+    startsap_cmd_sap_services: "{{ startsap_list_sap_services.stdout_lines|replace('pf=', '') }}"
+ 
+- name: Error if sap instances or sapstartsrv was not found in /usr/sap/sapservices
+  fail:
+    msg: "Error: SAP instances does not exist or sapstartsrv was not found."
+  when: startsap_list_sap_services == ""
+
+- name: Search all sap instances in /usr/sap/sapservices
+  shell:  "grep sapstartsrv /usr/sap/sapservices | grep -v '^ *#' | awk -F '/' '{ print $4;}' | sort | uniq"
+  register: startsap_list_all_sap_instances_output
+
+- name: Search profile name for all sap instances in /usr/sap/sapservices
+  shell:  "grep {{ item }} /usr/sap/sapservices | grep -v '^ *#' | grep SCS | cut -f2 -d' '"
+  register: startsap_list_sap_services_output
+  with_items: "{{ startsap_list_all_sap_instances_output.stdout_lines }}"
+
+- name: Set variable
+  set_fact:
+    startsap_list_sap_services_output: "{{ startsap_list_sap_services_output|replace('pf=', '') }}"
+
+###########################################
+# Get if there is any running service
+###########################################
+
+- name: Get instance numbers from profile name
+  shell: grep -w 'SAPSYSTEM'  {{ item.stdout }}
+  with_items: "{{ startsap_list_sap_services_output.results }}"
+  register: startsap_input_sap_sid_profile
+  
+- name: Set variable for start command
+  set_fact:
+    startsap_cmd_sap_services: "{{ item.stdout_lines | first }}"
+  with_items: "{{ startsap_input_sap_sid_profile.results }}"
+  register: startsap_cmd_prep_sap_services
+  
+- name: Make a list
+  set_fact:
+    startsap_cmd_sap_services: "{{ startsap_cmd_prep_sap_services.results | map(attribute='ansible_facts.startsap_cmd_sap_services') | list }}"
+
+- name: Check if SAP service is active
+  shell: "{{ startsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ item.split()[2] }} -function GetSystemInstanceList"
+  environment:
+    LIBPATH: "{{ startsap_dir_sapctrl_managednode }}"
+  register: startsap_output_list_inactive_instances
+  with_items: "{{ startsap_cmd_sap_services }}"
+
+- name: Check if SAP instance is active
+  shell: "{{ startsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ item.split()[2] }} -function GetSystemInstanceList |  grep {{ ansible_hostname }} | grep -i gray | sort -k 5n"
+  environment:
+    LIBPATH: "{{ startsap_dir_sapctrl_managednode }}"
+  failed_when: startsap_output_list_inactive_instances.rc >= 2
+  register: startsap_output_list_inactive_instances
+  with_items: "{{ startsap_cmd_sap_services }}"
+
+- name: Set variable for start command with inactive instances
+  set_fact:
+    startsap_cmd_sap_inactive_services: "{{ item.stdout }}"
+  with_items: "{{ startsap_output_list_inactive_instances.results }}"
+
+- name: Error, if SAP instance is not inactive
+  fail:
+    msg: "Error: No inactive SAP instances found"
+  failed_when: startsap_cmd_sap_inactive_services == ""
+
+######################################################
+# Display SAP start commands
+######################################################
+
+- name: Show start SAP services command
+  debug:
+    msg: "SAP start command - {{ startsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ item.split()[2] }} -function StartSystem ALL"
+  with_items: "{{ startsap_cmd_sap_services }}"
+  
+######################################################
+# Start SAP Instances
+######################################################
+  
+- name: Start SAP instances
+  command: "{{ startsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ item.split()[2] }} -function StartSystem ALL"
+  environment:
+    LIBPATH: "{{ startsap_dir_sapctrl_managednode }}"
+  args:
+    chdir: "{{ startsap_dir_sapctrl_managednode }}"
+  with_items: "{{ startsap_cmd_sap_services }}"

@@ -1,0 +1,73 @@
+---
+#   Copyright 2022 IBM Corporation
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+###########################################
+# tasks file for sap_host_agent_check
+###########################################
+- name: Ensure directory {{ sapopsyschk_dir_temp_managednode }} exists
+  file:
+    path: "{{ sapopsyschk_dir_temp_managednode }}"
+    state: directory
+    mode: '0755'
+
+- name: Create a symbolic link for db2
+  file:
+    src: /QOpenSys/usr/bin/qsh
+    dest: "{{ sapopsyschk_dir_temp_managednode }}/db2"
+    state: link
+
+- name: ASP Size check STORAGE_THRESHOLD_PERCENTAGE
+  shell:
+    cmd: db2 "SELECT TOTAL_CAPACITY, TOTAL_CAPACITY_AVAILABLE, STORAGE_THRESHOLD_PERCENTAGE FROM qsys2.asp_info WHERE ASP_NUMBER = 1" | grep -n 2 | awk '{ print $4; }'
+  args:
+    chdir: "{{ sapopsyschk_dir_temp_managednode }}"
+  register: sapopsyschk_asp_threshold_default
+  when: sapopsyschk_asp_threshold is undefined
+
+- name: Set variable for threshold default
+  set_fact:
+    sapopsyschk_asp_threshold: "{{ sapopsyschk_asp_threshold | default(sapopsyschk_asp_threshold_default.stdout) }}"
+
+- name: ASP Size check TOTAL_CAPACITY
+  shell:
+    cmd: db2 "SELECT TOTAL_CAPACITY, TOTAL_CAPACITY_AVAILABLE, STORAGE_THRESHOLD_PERCENTAGE FROM qsys2.asp_info WHERE ASP_NUMBER = 1" | grep -n 2 | awk '{ print $2; }'
+  args:
+    chdir: "{{ sapopsyschk_dir_temp_managednode }}"
+  register: sapopsyschk_asp_total_capacity_output
+
+- name: ASP Size check TOTAL_CAPACITY_AVAILABLE
+  shell:
+    cmd: db2 "SELECT TOTAL_CAPACITY, TOTAL_CAPACITY_AVAILABLE, STORAGE_THRESHOLD_PERCENTAGE FROM qsys2.asp_info WHERE ASP_NUMBER = 1" | grep -n 2 | awk '{ print $3; }'
+  register: sapopsyschk_asp_total_capacity_available_output
+
+- name: Set variable for ASP Size in percent
+  set_fact:
+    sapopsyschk_asp_total_capacity_percentage: "{{ '{:0.2f}'.format(100 * (( sapopsyschk_asp_total_capacity_output.stdout | int - sapopsyschk_asp_total_capacity_available_output.stdout | int ) / sapopsyschk_asp_total_capacity_output.stdout | int )) }}"
+
+- name: Show used ASP
+  debug:
+    msg:  "OK - System ASP used {{ sapopsyschk_asp_total_capacity_percentage }}%"
+  when: sapopsyschk_asp_total_capacity_percentage | int <sapopsyschk_asp_threshold | int
+
+- name: Show used ASP
+  debug:
+    msg:  "WARNING - System ASP used {{ sapopsyschk_asp_total_capacity_percentage }}%"
+  when: sapopsyschk_asp_total_capacity_percentage | int >=sapopsyschk_asp_threshold | int
+
+- name: Ensure {{ sapopsyschk_dir_temp_managednode }} directory is removed from {{ inventory_hostname }}
+  file:
+    path: "{{ sapopsyschk_dir_temp_managednode }}"
+    state: absent
+    mode: '0755'

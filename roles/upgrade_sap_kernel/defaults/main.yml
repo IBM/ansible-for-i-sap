@@ -1,5 +1,5 @@
 ---
-#   Copyright 2021 IBM Corporation
+#   Copyright 2022 IBM Corporation
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
 #   limitations under the License.
 
 # defaults variables for upgrade_sap_kernel
-kernel_upgrade_dir: "/tmp/kernel"
-kernel_download_dir: "/tmp/downloads/kernel"
-kernel_upgrade_work_dir: "/tmp/apysidkrn"
-release_switch: False
-kernel_upgrade_mode: "ADD"
+upgsapkrn_dir_temp_script_managednode: "/tmp/kernel"
+upgsapkrn_dir_download_managednode: "/tmp/downloads/kernel"
+upgsapkrn_dir_temp_iletools_extract_managednode: "/tmp/apysidkrn"
+upgsapkrn_input_upgrade_mode: "ADD"
+
 # Default SAPCAR local path
-sap_sapcar_local_path_default: "/usr/sap/hostctrl/exe"
-sap_hostagent_sapcar_file_name: "SAPCAR"
+upgsapkrn_dir_sapcar_default_managednode: "/usr/sap/hostctrl/exe"
+upgsapkrn_file_sapcar: "SAPCAR"

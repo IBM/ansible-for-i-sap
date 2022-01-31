@@ -1,0 +1,64 @@
+---
+#   Copyright 2022 IBM Corporation
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+###########################################
+# tasks file for sap_user_check
+###########################################
+
+- name: Ensure directory {{ sapopsyschk_dir_temp_managednode }} exists
+  file:
+    path: "{{ sapopsyschk_dir_temp_managednode }}"
+    state: directory
+    mode: '0755'
+
+- name: Create a symbolic link for db2
+  file:
+    src: /QOpenSys/usr/bin/qsh
+    dest: "{{ sapopsyschk_dir_temp_managednode }}/db2"
+    state: link
+
+- name: User check
+  shell:
+    cmd: db2 "SELECT SPECIAL_AUTHORITIES FROM QSYS2.USER_INFO WHERE AUTHORIZATION_NAME = UCASE('{{ ansible_user_id }}')"
+  args:
+    chdir: "{{ sapopsyschk_dir_temp_managednode }}"
+  failed_when: sapopsyschk_user_output.rc >= 2
+  register: sapopsyschk_user_output
+
+- name: Check User have special authority ALLOBJ
+  debug:
+    msg: "WARNING: User profile {{ ansible_user_id }} does not have special authority *ALLOBJ."
+  when: "'ALLOBJ' not in sapopsyschk_user_output.stdout"
+
+- name: Check User have special authority ALLOBJ
+  debug:
+    msg: "OK: User profile {{ ansible_user_id }} has special authority *ALLOBJ."
+  when: "'ALLOBJ' in sapopsyschk_user_output.stdout"
+
+- name: Check User have special authority SECADM
+  debug:
+    msg: "WARNING: User profile {{ ansible_user_id }} does not have special authority *SECADM."
+  when: "'SECADM' not in sapopsyschk_user_output.stdout"
+
+- name: Check User have special authority SECADM
+  debug:
+    msg: "OK: User profile {{ ansible_user_id }} has special authority *SECADM."
+  when: "'SECADM' in sapopsyschk_user_output.stdout"
+
+- name: Ensure {{ sapopsyschk_dir_temp_managednode }} directory is removed from {{ inventory_hostname }}
+  file:
+    path: "{{ sapopsyschk_dir_temp_managednode }}"
+    state: absent
+    mode: '0755'

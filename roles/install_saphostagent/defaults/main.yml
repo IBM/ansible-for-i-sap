@@ -16,21 +16,21 @@
 # defaults variables file for install_saphostagent
 
 # Temporary directory path, that will be created on the target host
-sap_hostagent_agent_tmp_directory: "/tmp/hostctrl"
+insshagnt_dir_temp_managednode: "/tmp/hostctrl"
 
 # Directory path on the Ansible host where SAR file is located
-sap_hostagent_download_local_path: "/tmp/downloads"
+insshagnt_dir_download_managednode: "/tmp/downloads"
 
 # Directory on the target host where SAPCAR is searched by default
-sap_sapcar_local_path_default: "/usr/sap/hostctrl/exe"
+insshagnt_dir_sapcar_default_managednode: "/usr/sap/hostctrl/exe"
 
 # Default SAPCAR file name
-sap_hostagent_sapcar_file_name: "SAPCAR"
+insshagnt_file_sapcar: "SAPCAR"
 
 # Boolean variable to indicate if the temporary directory on the target host will be removed or not after the installation
-sap_hostagent_clean_tmp_directory: True
+insshagnt_bool_clean_dir_temp_managednode: True
 
 # FOR INTERNAL USE:
-# Optional SAPHOSTAGENT command arguments (beside '-install' - and the optional argument -gid (see: sap_gid))
-sap_hostagent_agent_command_args: ""
+# Optional SAPHOSTAGENT command arguments (beside '-install' - and the optional argument -gid (see: insshagnt_r3group_gid))
+insshagnt_install_cmd_args: ""
 

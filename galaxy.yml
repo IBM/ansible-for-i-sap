@@ -9,7 +9,7 @@ namespace: ibm
 name: power_ibmi_sap
 
 # The version of the collection. Must be compatible with semantic versioning
-version: 1.0.1
+version: 1.1.0
 
 # The path to the Markdown (.md) readme file. This path is relative to the root of the collection
 readme: README.md
@@ -18,10 +18,10 @@ readme: README.md
 # @nicks:irc/im.site#channel'
 authors:
  - Christian Bartels <christian.bartels@de.ibm.com>
- - Ralf Büscher <ralf_buescher@de.ibm.com>
+ - Ralf Buescher <ralf_buescher@de.ibm.com>
  - Csaba Fuchs <Csaba.Fuchs@ibm.com>
  - Gerold Kurth <KURTH@de.ibm.com>
- - Markus Müller <Markus.Mueller3@ibm.com>
+ - Markus Mueller <Markus.Mueller3@ibm.com>
 
 ### OPTIONAL but strongly recommended
 
@@ -39,7 +39,7 @@ license_file: ''
 
 # A list of tags you want to associate with the collection for indexing/searching. A tag name has the same character
 # requirements as 'namespace' and 'name'
-tags: 
+tags:
  - infrastructure
  - ibm
  - power
@@ -56,7 +56,7 @@ dependencies: {}
 repository: https://github.com/IBM/ansible-for-i-sap
 
 # The URL to any online docs
-documentation: https://github.com/IBM/ansible-for-i-sap#readme
+documentation: https://ibm.github.io/ansible-for-i-sap/
 
 # The URL to the homepage of the collection/project
 homepage: https://github.com/IBM/ansible-for-i-sap

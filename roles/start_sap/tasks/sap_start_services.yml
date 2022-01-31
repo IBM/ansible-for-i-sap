@@ -1,0 +1,87 @@
+---
+#   Copyright 2022 IBM Corporation
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+###########################################
+# tasks file for sap_start_services
+###########################################
+
+###########################################
+# Check Input
+###########################################
+
+- name: Check if startsap_input_sap_sid variable provided
+  fail:
+    msg: "Error: Input parameter startsap_input_sap_sid is required."
+  when:  startsap_input_sap_sid is undefined
+  
+###########################################
+# Check specified SAP services
+###########################################
+  
+- name: Check {{ startsap_input_sap_sid }} in /usr/sap/sapservices
+  shell:  "grep sapstartsrv /usr/sap/sapservices | grep -v '^ *#' | grep {{ item }}"
+  with_items: "{{ startsap_input_sap_sid }}"
+  register: startsap_list_sap_services
+  when: startsap_input_sap_sid != "*"
+  
+- name: Set variable for start command
+  set_fact:
+    startsap_cmd_sap_services: "{{ item.stdout_lines }}"
+  with_items: "{{ startsap_list_sap_services.results }}"
+  register: startsap_cmd_prep_sap_services
+  when: startsap_input_sap_sid != "*"
+  
+- name: Make a list
+  set_fact:
+    startsap_cmd_sap_services: "{{ startsap_cmd_prep_sap_services.results | map(attribute='ansible_facts.startsap_cmd_sap_services') | list }}"
+  when: startsap_input_sap_sid != "*"
+
+###########################################
+# Check all SAP services
+###########################################
+
+- name: Check {{ startsap_input_sap_sid }} in /usr/sap/sapservices
+  shell:  "grep sapstartsrv /usr/sap/sapservices | grep -v '^ *#'"
+  register: startsap_list_sap_services
+  when: startsap_input_sap_sid == "*"
+
+- name: Set variable for start command
+  set_fact:
+    startsap_cmd_sap_services: "{{ startsap_list_sap_services.stdout_lines }}"
+  when: startsap_input_sap_sid == "*"
+ 
+- name: Error if {{ startsap_input_sap_sid }} or sapstartsrv was not found in /usr/sap/sapservices
+  fail:
+    msg: "Error: System {{ startsap_input_sap_sid  }} does not exist or sapstartsrv was not found."
+  when: startsap_list_sap_services == ""
+  
+######################################################
+# Display SAP start commands
+######################################################
+
+- name: Show start SAP Service command
+  debug:
+    msg: "SAP start command - {{ item|replace(' -u ' + startsap_sapstartsrv_user, '') }}"
+  with_items: "{{ startsap_cmd_sap_services }}"
+
+######################################################
+# Start SAP Services
+######################################################
+
+- name: Start SAP services
+  command: "{{ item.split(' -u')[0] }}"
+  environment:
+    LIBPATH: "{{ item.split()[0]|replace('/sapstartsrv', '') }}"
+  with_items: "{{ startsap_cmd_sap_services }}"
