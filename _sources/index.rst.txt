@@ -15,12 +15,14 @@ Features
 The following roles for administrator tasks with SAP on IBM i are provided:
 
   - :ref:`Installing or upgrading the SAP Host Agent <IBM.ansible-for-i-sap.docsite.install_saphostagent>`
-  
+
+  - :ref:`Installing additional SAP application servers <IBM.ansible-for-i-sap.docsite.sap_install_app_server>`
+
   - :ref:`Check basic operating system settings <IBM.ansible-for-i-sap.docsite.sap_opsyscheck>`
 
-  - :ref:`Start SAP instances <IBM.ansible-for-i-sap.docsite.start_sap>`
+  - :ref:`Start SAP instances or SAP start services <IBM.ansible-for-i-sap.docsite.start_sap>`
 
-  - :ref:`Stop SAP instances <IBM.ansible-for-i-sap.docsite.stop_sap>`
+  - :ref:`Stop SAP instances or SAP start services <IBM.ansible-for-i-sap.docsite.stop_sap>`
 
   - :ref:`Upgrade the kernel of an already existing SAP system <IBM.ansible-for-i-sap.docsite.upgrade_sap_kernel>`
 
@@ -56,6 +58,7 @@ Copyright IBM Corporation 2021,2022
    :hidden:
 
    install_saphostagent
+   sap_install_app_server
    sap_opsyscheck
    start_sap
    stop_sap

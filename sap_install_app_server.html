@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Role sap_install_app_server &mdash; IBM ansible-for-i-sap collection 1.1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Role sap_opsyscheck" href="sap_opsyscheck.html" />
+    <link rel="prev" title="Role install_saphostagent" href="install_saphostagent.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> IBM ansible-for-i-sap collection
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation and configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install_and_config.html">Installation and configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Available roles</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install_saphostagent.html">Role install_saphostagent</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Role sap_install_app_server</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tags">Tags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#variables">Variables</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#remarks">Remarks:</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#defaults">Defaults</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#playbooks">Playbooks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sap-installation">SAP Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sap-uninstall">SAP Uninstall</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#additional-information">Additional Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#license">License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#author-information">Author Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#copyright">Copyright</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sap_opsyscheck.html">Role sap_opsyscheck</a></li>
+<li class="toctree-l1"><a class="reference internal" href="start_sap.html">Role start_sap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stop_sap.html">Role stop_sap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upgrade_sap_kernel.html">Role upgrade_sap_kernel</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">IBM ansible-for-i-sap collection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Role sap_install_app_server</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/IBM/ansible-for-i-sap/blob/main/docs/docsite/sap_install_app_server.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="role-sap-install-app-server">
+<span id="ibm-ansible-for-i-sap-docsite-sap-install-app-server"></span><h1><a class="toc-backref" href="#id51">Role sap_install_app_server</a><a class="headerlink" href="#role-sap-install-app-server" title="Permalink to this headline"></a></h1>
+<p>After the initial install of an SAP system, you can add or remove additional application servers for that SAP system to distribute the workload better when the usage of the SAP system increases or decreases. The SAP Software Provisioning Manager (SWPM) is offering options to install or uninstall SAP application servers for an existing SAP system. For more information about the SWPM, see the SAP documentation at the link <a class="reference external" href="https://support.sap.com/en/tools/software-logistics-tools.html#section_622087154">SAP Software Logistics - Software Provisioning</a>.</p>
+<p>Typically, the SWPM is used as an interactive tool which takes the input from the SAP administrator to perform the selected installation activity. Besides that, the SWPM can be executed in unattended mode and process a parameter input file that has been prepared prior to the actual execution. For more information about the unattended mode for the SWPM, see <a class="reference external" href="https://launchpad.support.sap.com/#/notes/2230669">SAP Note 2230669</a> and the <a class="reference external" href="https://help.sap.com/docs/SOFTWARE_PROVISIONING_MANAGER/30839dda13b2485889466316ce5b39e9/c8ed609927fa4e45988200b153ac63d1.html">SAP Installation Documentation</a>, section “System Provisioning Using a Parameter Input File”.</p>
+<p>The role sap_install_app_server is installing or uninstalling additional application servers on IBM i using the SWPM in unattended mode. To execute the SWPM in unattended mode, the role is using a parameter input file called “inifile.params”. The role sap_install_app_server can create its on input file based on Ansible input variables during execution or use an already existing input file that has been created by the SWPM previously.</p>
+<p>Currently, application server installations based on SAP NetWeaver 7.4 and higher are supported for both IBM Db2 for i and SAP HANA as the database. The role sap_install_app_server only supports SWPM 1.0, SWPM 2.0 is currently not supported.</p>
+<p>If the SWPM is executed in unattended mode by Ansible and an error occurs, you will have to check the SWPM installation directory for the cause as in a manual installation. After correcting the error, you can restart the Ansible playbook again, and the SWPM will continue the current installation in unattended Mode from the point of the failure.</p>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#role-sap-install-app-server" id="id51">Role sap_install_app_server</a></p>
+<ul>
+<li><p><a class="reference internal" href="#requirements" id="id52">Requirements</a></p></li>
+<li><p><a class="reference internal" href="#tags" id="id53">Tags</a></p></li>
+<li><p><a class="reference internal" href="#variables" id="id54">Variables</a></p></li>
+<li><p><a class="reference internal" href="#defaults" id="id55">Defaults</a></p></li>
+<li><p><a class="reference internal" href="#dependencies" id="id56">Dependencies</a></p></li>
+<li><p><a class="reference internal" href="#playbooks" id="id57">Playbooks</a></p></li>
+<li><p><a class="reference internal" href="#additional-information" id="id58">Additional Information</a></p></li>
+<li><p><a class="reference internal" href="#license" id="id59">License</a></p></li>
+<li><p><a class="reference internal" href="#author-information" id="id60">Author Information</a></p></li>
+<li><p><a class="reference internal" href="#copyright" id="id61">Copyright</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="requirements">
+<h2><a class="toc-backref" href="#id52">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this headline"></a></h2>
+<p>This role is intended for the operating system IBM i. The target system must be enabled to execute Ansible playbooks. For details, see the prerequisites section in <a class="reference internal" href="install_and_config.html#ibm-ansible-for-i-sap-docsite-install-and-config-prerequisites"><span class="std std-ref">Ansible Content for IBM Power Systems - IBM i with SAP Software</span></a>.</p>
+<p>The role sap_install_app_server must be executed as user profile QSECOFR or a user profile with similar authorities, user class <em>*SECOFR</em> or at least special authorities <em>*ALLOBJ</em>, <em>*SECADM</em> and <em>*JOBCTL</em>. Additionally, the user must have the following parameters defined: <em>OWNER(*USRPRF) LANGID(ENU) CNTRYID(US) CCSID(500) LOCALE(*NONE)</em>.</p>
+<p>To create a new user profile use the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CRTUSRPRF</span> <span class="n">USRPRF</span><span class="p">(</span><span class="o">&lt;</span><span class="n">user</span> <span class="n">profile</span> <span class="n">name</span><span class="o">&gt;</span><span class="p">)</span> <span class="n">PASSWORD</span><span class="p">(</span><span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">)</span> <span class="n">USRCLS</span><span class="p">(</span><span class="o">*</span><span class="n">SECOFR</span><span class="p">)</span> <span class="n">TEXT</span><span class="p">(</span><span class="s1">&#39;SAP installation user used by Ansible&#39;</span><span class="p">)</span> <span class="n">SPCAUT</span><span class="p">(</span><span class="o">*</span><span class="n">USRCLS</span><span class="p">)</span> <span class="n">OWNER</span><span class="p">(</span><span class="o">*</span><span class="n">USRPRF</span><span class="p">)</span> <span class="n">LANGID</span><span class="p">(</span><span class="n">ENU</span><span class="p">)</span> <span class="n">CNTRYID</span><span class="p">(</span><span class="n">US</span><span class="p">)</span> <span class="n">CCSID</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span> <span class="n">LOCALE</span><span class="p">(</span><span class="o">*</span><span class="n">NONE</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To adjust an already existing user profile with sufficient authorities, use the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CHGUSRPRF</span> <span class="n">USRPRF</span><span class="p">(</span><span class="o">&lt;</span><span class="n">user</span> <span class="n">profile</span> <span class="n">name</span><span class="o">&gt;</span><span class="p">)</span> <span class="n">OWNER</span><span class="p">(</span><span class="o">*</span><span class="n">USRPRF</span><span class="p">)</span> <span class="n">LANGID</span><span class="p">(</span><span class="n">ENU</span><span class="p">)</span> <span class="n">CNTRYID</span><span class="p">(</span><span class="n">US</span><span class="p">)</span> <span class="n">CCSID</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span> <span class="n">LOCALE</span><span class="p">(</span><span class="o">*</span><span class="n">NONE</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The host must have enough free space on disk to store and execute an SAP application server. The amount of storage needed depends on many factors, such as number of active SAP users, the number of SAP work processes and SAP buffer sizes.</p>
+<p>A current version of the SAP Host Agent must be installed.</p>
+<p>The database, ASCS instance and primary application server instance (or the central instance) of the SAP system must be installed. At least the ASCS instance of the SAP system must be active.</p>
+<p>The global directories of the SAP system (<code class="docutils literal notranslate"><span class="pre">/sapmnt/&lt;sid&gt;/exe</span></code>, <code class="docutils literal notranslate"><span class="pre">/sapmnt/&lt;sid&gt;/global</span></code>, <code class="docutils literal notranslate"><span class="pre">/sapmnt/&lt;sid&gt;/j2ee</span></code> and <code class="docutils literal notranslate"><span class="pre">/sapmnt/&lt;sid&gt;/profile</span></code>) must be accessible from the target host.</p>
+</section>
+<section id="tags">
+<h2><a class="toc-backref" href="#id53">Tags</a><a class="headerlink" href="#tags" title="Permalink to this headline"></a></h2>
+<p>Specify one of the following tags to specify if you want to install or uninstall an additional application server. If you do not specify a tag, an error message will be sent.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 69%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Tag</p></th>
+<th class="head"><p>Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sap_install_app_server</span></code></p></td>
+<td><p>Install an additional SAP application server</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sap_uninstall_app_server</span></code></p></td>
+<td><p>Remove an existing SAP application server and its components</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="variables">
+<h2><a class="toc-backref" href="#id54">Variables</a><a class="headerlink" href="#variables" title="Permalink to this headline"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 32%" />
+<col style="width: 57%" />
+<col style="width: 12%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Usage</p></th>
+<th class="head"><p>Required</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_install_mode</span></code></p></td>
+<td><p>Reuse or create input parameter file for the unattended mode:
+<code class="docutils literal notranslate"><span class="pre">reuseInifile</span></code> = An already existing file inifile.params will be used.
+<code class="docutils literal notranslate"><span class="pre">createInifile</span></code> = A new file inifile.params will be created base on the other input variables.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id40" id="id1">1</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_dir_swpm_managednode</span></code></p></td>
+<td><p>Directory where the SWPM software is located.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id41" id="id2">2</a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_logfile_path</span></code></p></td>
+<td><p>Temporary directory path where installation and uninstall logs and data are saved.</p></td>
+<td><p>No <a class="footnote-reference brackets" href="#id40" id="id3">1</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_sap_sid</span></code></p></td>
+<td><p>The SAP SID of the SAP system used for the installation of the additional application server.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id46" id="id4">7</a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_file_inifile</span></code></p></td>
+<td><p>Directory where the prepared files inifile.params and instkey.pkey are located.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id46" id="id5">7</a> <a class="footnote-reference brackets" href="#id42" id="id6">3</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_initfile_NW_AS_instanceNumber</span></code></p></td>
+<td><p>The SAP instance number of the SAP instance to be installed.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id46" id="id7">7</a> <a class="footnote-reference brackets" href="#id43" id="id8">4</a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_nwUsers_sapsysGID</span></code></p></td>
+<td><p>Group ID (GID) of the SAP user profile SAPSYS.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id46" id="id9">7</a> <a class="footnote-reference brackets" href="#id43" id="id10">4</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_nwUsers_sapsysGID</span></code></p></td>
+<td><p>User ID (UID) of the SAP user profile &lt;SAPSID&gt;ADM.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id46" id="id11">7</a> <a class="footnote-reference brackets" href="#id43" id="id12">4</a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_NW_GetMasterPassword</span></code></p></td>
+<td><p>Encrypted master password used by the SWPM.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id46" id="id13">7</a> <a class="footnote-reference brackets" href="#id43" id="id14">4</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_SAPInstDes25Hash</span></code></p></td>
+<td><p>Encryption string of the file inifile.params used by the SWPM</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id46" id="id15">7</a> <a class="footnote-reference brackets" href="#id43" id="id16">4</a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_instkey</span></code></p></td>
+<td><p>Encryption string of the instkey.pkey used by the SWPM</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id46" id="id17">7</a> <a class="footnote-reference brackets" href="#id43" id="id18">4</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_SAPDBType</span></code></p></td>
+<td><p>The SAP database type (<code class="docutils literal notranslate"><span class="pre">DB4</span></code> for IBM Db2 for i or <code class="docutils literal notranslate"><span class="pre">HDB</span></code> for SAP HANA).</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id46" id="id19">7</a> <a class="footnote-reference brackets" href="#id44" id="id20">5</a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_NW_release</span></code></p></td>
+<td><p>The SWPM Product ID needed for the SAP release of the SAP system.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id46" id="id21">7</a> <a class="footnote-reference brackets" href="#id43" id="id22">4</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_dir_hdbclient_managednode</span></code></p></td>
+<td><p>Directory where the HANA database client media is located.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id46" id="id23">7</a> <a class="footnote-reference brackets" href="#id45" id="id24">6</a> <a class="footnote-reference brackets" href="#id43" id="id25">4</a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_dir_downloadbasket_managednode</span></code></p></td>
+<td><p>Directory where the IGSHELPER.SAR archive is located.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id46" id="id26">7</a> <a class="footnote-reference brackets" href="#id45" id="id27">6</a> <a class="footnote-reference brackets" href="#id43" id="id28">4</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_HDB_Schema_schemaName</span></code></p></td>
+<td><p>The SAP HANA database schema.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id46" id="id29">7</a> <a class="footnote-reference brackets" href="#id43" id="id30">4</a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_HDB_Schema_schemaPassword</span></code></p></td>
+<td><p>Encrypted password of SAP HANA database schema.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id46" id="id31">7</a> <a class="footnote-reference brackets" href="#id43" id="id32">4</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_HDB_getDBInfo_instanceNumber</span></code></p></td>
+<td><p>The HDB instance number.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id46" id="id33">7</a> <a class="footnote-reference brackets" href="#id43" id="id34">4</a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">uninsappsvr_input_sap_sid</span></code></p></td>
+<td><p>The SAP SID of the SAP system used for the uninstall of an application server.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id47" id="id35">8</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">uninsappsvr_input_file_inifile</span></code></p></td>
+<td><p>Directory where the files inifile.params and instkey.pkey for the uninstall are located.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id47" id="id36">8</a> <a class="footnote-reference brackets" href="#id42" id="id37">3</a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">uninsappsvr_input_initfile_NW_AS_instanceNumber</span></code></p></td>
+<td><p>The SAP instance number of the SAP instance to be uninstalled.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id47" id="id38">8</a> <a class="footnote-reference brackets" href="#id43" id="id39">4</a></p></td>
+</tr>
+</tbody>
+</table>
+<section id="remarks">
+<h3>Remarks:<a class="headerlink" href="#remarks" title="Permalink to this headline"></a></h3>
+<dl class="footnote brackets">
+<dt class="label" id="id40"><span class="brackets">1</span><span class="fn-backref">(<a href="#id1">1</a>,<a href="#id3">2</a>)</span></dt>
+<dd><p>Default provided.</p>
+</dd>
+<dt class="label" id="id41"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dd><p>Needed software and location of the software have be provided.</p>
+</dd>
+<dt class="label" id="id42"><span class="brackets">3</span><span class="fn-backref">(<a href="#id6">1</a>,<a href="#id37">2</a>)</span></dt>
+<dd><p>Only needed in mode reuseInifile.</p>
+</dd>
+<dt class="label" id="id43"><span class="brackets">4</span><span class="fn-backref">(<a href="#id8">1</a>,<a href="#id10">2</a>,<a href="#id12">3</a>,<a href="#id14">4</a>,<a href="#id16">5</a>,<a href="#id18">6</a>,<a href="#id22">7</a>,<a href="#id25">8</a>,<a href="#id28">9</a>,<a href="#id30">10</a>,<a href="#id32">11</a>,<a href="#id34">12</a>,<a href="#id39">13</a>)</span></dt>
+<dd><p>Only needed in mode createInifile. For encrypted data like passwords, the data has to be copied directly from the SWPM generated files inifile.params and instkey.pkey!</p>
+</dd>
+<dt class="label" id="id44"><span class="brackets"><a class="fn-backref" href="#id20">5</a></span></dt>
+<dd><p>Only needed in mode createInifile. Default provided.</p>
+</dd>
+<dt class="label" id="id45"><span class="brackets">6</span><span class="fn-backref">(<a href="#id24">1</a>,<a href="#id27">2</a>)</span></dt>
+<dd><p>Use only SAP media and SAP archives which are compatible with the target SAP system (the most current patch level of the version which was initially used to setup the SAP system).</p>
+</dd>
+<dt class="label" id="id46"><span class="brackets">7</span><span class="fn-backref">(<a href="#id4">1</a>,<a href="#id5">2</a>,<a href="#id7">3</a>,<a href="#id9">4</a>,<a href="#id11">5</a>,<a href="#id13">6</a>,<a href="#id15">7</a>,<a href="#id17">8</a>,<a href="#id19">9</a>,<a href="#id21">10</a>,<a href="#id23">11</a>,<a href="#id26">12</a>,<a href="#id29">13</a>,<a href="#id31">14</a>,<a href="#id33">15</a>)</span></dt>
+<dd><p>Only needed for the installation of an additional application server.</p>
+</dd>
+<dt class="label" id="id47"><span class="brackets">8</span><span class="fn-backref">(<a href="#id35">1</a>,<a href="#id36">2</a>,<a href="#id38">3</a>)</span></dt>
+<dd><p>Only needed for the uninstall of an existing application server.</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="defaults">
+<h2><a class="toc-backref" href="#id55">Defaults</a><a class="headerlink" href="#defaults" title="Permalink to this headline"></a></h2>
+<p>Suggested default values are provided in defaults/main.yml:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 62%" />
+<col style="width: 38%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_install_mode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;reuseInifile&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_logfile_path</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;/tmp/Ansible/log&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_SAPDBType</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;DB4&quot;</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>The file defaults/main.yml contains more entries, but the values for the other variables are set to empty strings. These entries are required to ensure complete contents in inifile.params when variable <code class="docutils literal notranslate"><span class="pre">insappsvr_input_install_mode</span></code> is set to <code class="docutils literal notranslate"><span class="pre">createInifile</span></code>. It is in the responsibility of the playbook to set meaningful values as required for the selected operation.</p>
+</section>
+<section id="dependencies">
+<h2><a class="toc-backref" href="#id56">Dependencies</a><a class="headerlink" href="#dependencies" title="Permalink to this headline"></a></h2>
+<p>None.</p>
+</section>
+<section id="playbooks">
+<h2><a class="toc-backref" href="#id57">Playbooks</a><a class="headerlink" href="#playbooks" title="Permalink to this headline"></a></h2>
+<section id="sap-installation">
+<h3>SAP Installation<a class="headerlink" href="#sap-installation" title="Permalink to this headline"></a></h3>
+<p><strong>Example Playbook for the installation of the SAP additional application server reusing an existing inifile.params and the related instkey.pkey</strong></p>
+<p>Note: For more information how to create an inifile.params file, see <a class="reference external" href="https://launchpad.support.sap.com/#/notes/2230669">SAP Note 2230669</a>.</p>
+<p>The example playbook in the current directory is named sap_install_app_server_reuseInifile.yml and has the following contents:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install SAP Additional Application Server</span><span class="w"></span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ibmi_servers</span><span class="w"></span>
+<span class="w">  </span><span class="nt">vars</span><span class="p">:</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_install_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;reuseInifile&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_sap_sid</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;PRD&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_dir_swpm_managednode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/tmp/ANSIBLE/SWPM10&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_file_inifile</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/tmp/ANSIBLE/inifiles/PRD/inst/07/inifile.params&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">roles</span><span class="p">:</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ansible_dir&gt;/roles/sap_install_app_server</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Note: Make sure, the software locations defined in the inifile.params are still available. For example: the SAP HANA database client.</p>
+<p>Note: Due to a glitch in the SWPM, the location of the SAP HANA DB client media will not be automatically saved in inifile.params after is was specified during the installation. Ensure to add the following line to inifile.params before using it with this Ansible role:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SAPINST</span><span class="o">.</span><span class="n">CD</span><span class="o">.</span><span class="n">PACKAGE</span><span class="o">.</span><span class="n">RDBMS</span><span class="o">-</span><span class="n">HDB</span><span class="o">-</span><span class="n">CLIENT</span><span class="o">=&lt;</span><span class="n">SAP_HANA_DB_Client_Media_Directory</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>This is also explained in the SAP installation documentation.</p>
+<p>Run the installation by:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ansible-playbook --verbose sap_install_app_server_reuseInifile.yml -t sap_install_app_server</span><span class="w"></span>
+</pre></div>
+</div>
+<p><strong>Example Playbook for the installation of the SAP additional application server creating its own inifile.params and the related instkey.pkey</strong></p>
+<p>Note: For more information how to create an inifile.params file, see <a class="reference external" href="https://launchpad.support.sap.com/#/notes/2230669">SAP Note 2230669</a>.</p>
+<p>The example playbook in the current directory is named sap_install_app_server_createInifile.yml and has the following contents:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install SAP Additional Application Server</span><span class="w"></span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ibmi_servers</span><span class="w"></span>
+<span class="w">  </span><span class="nt">vars</span><span class="p">:</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_install_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;createInifile&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_sap_sid</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;PRD&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_dir_swpm_managednode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/tmp/ANSIBLE/SWPM10&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_initfile_NW_AS_instanceNumber</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;07&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_nwUsers_sapsysGID</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;204&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_nwUsers_sidAdmUID</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;205&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_NW_GetMasterPassword</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;des25(71cIuqdFOxGZRkPNI3r5iAxx)&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_SAPInstDes25Hash</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SAPInstDes25Hash=$eY3ELBT5gQ2Z$C+eS02APqADAELB7RK2SuI2rZCajRanfIv/JgPeqeAesO7SPAT9Bj1Ycxf6tV/QHkrMqW1i2QHLqPLTwy8f6xicu2fsLNQjX&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_instkey</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;5HhD4qsHDP6S+eJXsVu3xeU1dh4nu78x&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_SAPDBType</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;HDB&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_NW_release</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NW_DI:S4HANA1709.CORE.HDB.PD&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_dir_hdbclient_managednode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/tmp/ANSIBLE/SAPHANAclient/SAP_HANA_CLIENT&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_dir_downloadbasket</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/tmp/ANSIBLE/downloadBasket&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_HDB_Schema_schemaName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SAPHDBABAP&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_HDB_Schema_schemaPassword</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;des25(iD9vfeDFE1otL9JQbPeF6Qxx)&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_HDB_getDBInfo_instanceNumber</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;00&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">roles</span><span class="p">:</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ansible_dir&gt;/roles/sap_install_app_server</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Run the installation by:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ansible-playbook --verbose sap_install_app_server_createInifile.yml -t sap_install_app_server</span><span class="w"></span>
+</pre></div>
+</div>
+<p>For some selected entries for the playbook Yaml file you must use the following mapping table to copy the needed values from the file inifile.params and the file instkey.pkey:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 37%" />
+<col style="width: 33%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable in the playbook</p></th>
+<th class="head"><p>Parameter in the file inifile.params</p></th>
+<th class="head"><p>Remarks</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_sap_sid</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">NW_readProfileDir.profileDir</span></code></p></td>
+<td><p>Get the &lt;SID&gt; from the profile dir name</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_initfile_NW_AS_instanceNumber</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">NW_AS.instanceNumber</span></code></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_nwUsers_sapsysGID</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nwUsers.sapsysGID</span></code></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_nwUsers_sidAdmUID</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nwUsers.sidAdmUID</span></code></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_NW_GetMasterPassword</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">NW_GetMasterPassword.masterPwd</span></code></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_SAPInstDes25Hash</span></code></p></td>
+<td></td>
+<td><p>Grep the Des25 hash key after the
+string <code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">IMPORTANT</span> <span class="pre">DO</span> <span class="pre">NOT</span> <span class="pre">DELETE!!!</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_NW_release</span></code></p></td>
+<td></td>
+<td><p>Get the SAP product id in the third
+line after the string <code class="docutils literal notranslate"><span class="pre">product</span> <span class="pre">id</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_dir_downloadbasket_managednode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">archives.downloadBasket</span></code></p></td>
+<td><p>Directory where the IGSHELPER.SAR is
+located</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_HDB_Schema_schemaName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">HDB_Schema_Check_Dialogs.schemaName</span></code></p></td>
+<td><p>Only SAP HANA</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_HDB_Schema_schemaPassword</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">HDB_Schema_Check_Dialogs.schemaPassword</span></code></p></td>
+<td><p>Only SAP HANA</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_HDB_getDBInfo_instanceNumber</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">NW_HDB_getDBInfo.instanceNumber</span></code></p></td>
+<td><p>Only SAP HANA</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 22%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable in the playbook</p></th>
+<th class="head"><p>Data in the instkey.pkey</p></th>
+<th class="head"><p>Remarks</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">insappsvr_input_instkey</span></code></p></td>
+<td></td>
+<td><p>Grep the complete encrypted first line in the file instkey.pkey</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="sap-uninstall">
+<h3>SAP Uninstall<a class="headerlink" href="#sap-uninstall" title="Permalink to this headline"></a></h3>
+<p><strong>Example Playbook for the uninstall of the SAP additional application server creating its own inifile.params</strong></p>
+<p>The example playbook in the current directory is named sap_uninstall_app_server_createInifile.yml and has the following contents:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Uninstall SAP Additional Application Server</span><span class="w"></span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ibmi_servers</span><span class="w"></span>
+<span class="w">  </span><span class="nt">vars</span><span class="p">:</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_install_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;createInifile&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_dir_swpm_managednode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/tmp/ANSIBLE/SWPM10&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uninsappsvr_input_sap_sid</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;PRD&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uninsappsvr_input_initfile_NW_AS_instanceNumber</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;07&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">roles</span><span class="p">:</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ansible_dir&gt;/roles/sap_install_app_server</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Note: No encrypted data and no other data are needed as input. Actually more or less, only the SAP SID and the SAP Instance number are needed for the uninstall.</p>
+<p>Run the installation by:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ansible-playbook --verbose sap_uninstall_app_server_createInifile.yml -t sap_uninstall_app_server</span><span class="w"></span>
+</pre></div>
+</div>
+<p><strong>Example Playbook for the uninstall of the SAP additional application server reusing an existing inifile.params</strong></p>
+<p>Note: For more information how to create an inifile.params file, see <a class="reference external" href="https://launchpad.support.sap.com/#/notes/2230669">SAP Note 2230669</a>.</p>
+<p>The example playbook in the current directory is named sap_uninstall_app_server_reuseInifile.yml and has the following contents:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Uninstall SAP Additional Application Server</span><span class="w"></span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ibmi_servers</span><span class="w"></span>
+<span class="w">  </span><span class="nt">vars</span><span class="p">:</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_input_install_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;reuseInifile&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">insappsvr_dir_swpm_managednode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/tmp/ANSIBLE/SWPM10&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uninsappsvr_input_file_inifile</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/tmp/ANSIBLE/inifiles/PRD/uninst/07/inifile.params&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">roles</span><span class="p">:</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ansible_dir&gt;/roles/sap_install_app_server</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Note: No encrypted data and no instkey.pkey are needed for an SAP uninstall reusing an existing inifile.params file.</p>
+<p>Run the installation by:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ansible-playbook --verbose sap_uninstall_app_server_reuseInifile.yml -t sap_uninstall_app_server</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="additional-information">
+<h2><a class="toc-backref" href="#id58">Additional Information</a><a class="headerlink" href="#additional-information" title="Permalink to this headline"></a></h2>
+</section>
+<section id="license">
+<h2><a class="toc-backref" href="#id59">License</a><a class="headerlink" href="#license" title="Permalink to this headline"></a></h2>
+<p>This collection is licensed under the <a class="reference external" href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 license</a>.</p>
+</section>
+<section id="author-information">
+<h2><a class="toc-backref" href="#id60">Author Information</a><a class="headerlink" href="#author-information" title="Permalink to this headline"></a></h2>
+<p>SAP on IBM Power Development Team</p>
+</section>
+<section id="copyright">
+<h2><a class="toc-backref" href="#id61">Copyright</a><a class="headerlink" href="#copyright" title="Permalink to this headline"></a></h2>
+<p>Copyright IBM Corporation 2021,2022</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="install_saphostagent.html" class="btn btn-neutral float-left" title="Role install_saphostagent" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sap_opsyscheck.html" class="btn btn-neutral float-right" title="Role sap_opsyscheck" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021,2022, IBM.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

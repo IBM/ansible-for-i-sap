@@ -17,7 +17,18 @@ Requirements
 
 This role is intended for the operating system IBM i. The target system must be enabled to execute Ansible playbooks. For details, see the prerequisites section in :ref:`Ansible Content for IBM Power Systems - IBM i with SAP Software <IBM.ansible-for-i-sap.docsite.install_and_config.prerequisites>`.
 
-The role install_saphostagent must be executed as user profile QSECOFR or a user profile with similar authorities, user class *\*SECOFR* or at least special authorities *\*ALLOBJ* and *\*SECADM*.
+The role install_saphostagent must be executed as user profile QSECOFR or a user profile with similar authorities, user class *\*SECOFR* or at least special authorities *\*ALLOBJ*, *\*SECADM* and *\*JOBCTL*.
+
+Tags
+----
+
+The following tag can be specified optionally. Omitting the tag or specifying tag ``-t all`` has the same effect.
+
++--------------------------+------------------------------------------------------------------+
+| Tag                      | Usage                                                            |
++==========================+==================================================================+
+| ``install_saphostagent`` | Install the SAP Host Agent.                                      |
++--------------------------+------------------------------------------------------------------+
 
 Variables
 ---------

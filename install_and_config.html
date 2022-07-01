@@ -53,6 +53,7 @@
 <p class="caption" role="heading"><span class="caption-text">Available roles</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install_saphostagent.html">Role install_saphostagent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sap_install_app_server.html">Role sap_install_app_server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sap_opsyscheck.html">Role sap_opsyscheck</a></li>
 <li class="toctree-l1"><a class="reference internal" href="start_sap.html">Role start_sap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stop_sap.html">Role stop_sap</a></li>
@@ -103,7 +104,7 @@
 </pre></div>
 </div>
 <p>or:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CRTUSRPRF</span> <span class="n">USRPRF</span><span class="p">(</span><span class="n">ANSIBLE</span><span class="p">)</span> <span class="n">PASSWORD</span><span class="p">(</span><span class="o">&lt;...&gt;</span><span class="p">)</span> <span class="n">USRCLS</span><span class="p">(</span><span class="o">*</span><span class="n">PGMR</span><span class="p">)</span> <span class="n">TEXT</span><span class="p">(</span><span class="s1">&#39;Ansible functional user&#39;</span><span class="p">)</span> <span class="n">SPCAUT</span><span class="p">(</span><span class="o">*</span><span class="n">ALLOBJ</span> <span class="o">*</span><span class="n">SECADM</span> <span class="o">*</span><span class="n">JOBCTL</span> <span class="o">*</span><span class="n">SPLCTL</span> <span class="o">*</span><span class="n">IOSYSCFG</span> <span class="o">*</span><span class="n">SAVSYS</span><span class="p">)</span> <span class="n">OWNER</span><span class="p">(</span><span class="o">*</span><span class="n">USRPRF</span><span class="p">)</span> <span class="n">LANGID</span><span class="p">(</span><span class="n">ENU</span><span class="p">)</span> <span class="n">CNTRYID</span><span class="p">(</span><span class="n">US</span><span class="p">)</span> <span class="n">CCSID</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span> <span class="n">LOCALE</span><span class="p">(</span><span class="o">*</span><span class="n">NONE</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CRTUSRPRF</span> <span class="n">USRPRF</span><span class="p">(</span><span class="n">ANSIBLE</span><span class="p">)</span> <span class="n">PASSWORD</span><span class="p">(</span><span class="o">&lt;...&gt;</span><span class="p">)</span> <span class="n">USRCLS</span><span class="p">(</span><span class="o">*</span><span class="n">PGMR</span><span class="p">)</span> <span class="n">TEXT</span><span class="p">(</span><span class="s1">&#39;Ansible functional user&#39;</span><span class="p">)</span> <span class="n">SPCAUT</span><span class="p">(</span><span class="o">*</span><span class="n">ALLOBJ</span> <span class="o">*</span><span class="n">SECADM</span> <span class="o">*</span><span class="n">JOBCTL</span><span class="p">)</span> <span class="n">OWNER</span><span class="p">(</span><span class="o">*</span><span class="n">USRPRF</span><span class="p">)</span> <span class="n">LANGID</span><span class="p">(</span><span class="n">ENU</span><span class="p">)</span> <span class="n">CNTRYID</span><span class="p">(</span><span class="n">US</span><span class="p">)</span> <span class="n">CCSID</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span> <span class="n">LOCALE</span><span class="p">(</span><span class="o">*</span><span class="n">NONE</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -257,6 +258,7 @@ ibmiserver03.mycorp.com
 </section>
 <section id="copyright">
 <h2>Copyright<a class="headerlink" href="#copyright" title="Permalink to this headline"></a></h2>
+<p>Copyright IBM Corporation 2022</p>
 </section>
 </section>
 

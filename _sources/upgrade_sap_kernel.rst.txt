@@ -30,7 +30,7 @@ The role upgrade_sap_kernel will install the contents of all SAR files in the do
 Tags
 ----
 
-Specify one of the following tags to specify if the code in the downloaded SAR file is at the same release and build level as the currently installed kernel. If you do not specify a tag, ``-t sap_kernel_upgrade_same_release`` will be assumed as default. If you misspell the tag, no steps in the role will be executed.
+Specify one of the following tags to specify if the code in the downloaded SAR file is at the same release and build level as the currently installed kernel. If you do not specify a tag, ``-t sap_kernel_upgrade_same_release`` will be assumed as default. If you misspell the tag, an error message will be sent.
 
 +-------------------------------------+-------------------------------------------------------------------------+
 | Tag                                 | Usage                                                                   |
