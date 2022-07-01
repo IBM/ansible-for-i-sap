@@ -68,7 +68,7 @@
 
 - name: Get instance number from profile name
   shell: grep -w 'SAPSYSTEM'  {{ item|replace('pf=', '') }}
-  with_items: "{{ stopsap_list_sap_services.stdout_lines }}"
+  with_items: "{{ stopsap_list_sap_services_output }}"
   register: stopsap_sap_sid_profile_name
 
 ######################################################
@@ -88,7 +88,7 @@
   when: stopsap_input_sap_sid | int <2
   
 ######################################################
-# Start SAP Services
+# Stop SAP Services
 ######################################################
 
 - name: Stop SAP service

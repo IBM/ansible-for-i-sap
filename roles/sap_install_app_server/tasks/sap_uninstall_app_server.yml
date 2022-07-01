@@ -1,0 +1,122 @@
+---
+#   Copyright 2022 IBM Corporation
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+# tasks file for sap_install_app_server
+#
+- name: Create Timestamp for LOG file
+  ansible.builtin.set_fact:
+    insappsvr_timestamp_for_logfile: "CommandLineOutput_sap_uninstall_app_server_{{ ansible_date_time.iso8601_basic_short }}.log"
+
+- name: Create log dir
+  file:
+    path: "{{ insappsvr_logfile_path }}"
+    state: directory
+
+- name: Create inifile from template
+  ansible.builtin.template:
+    src: inifile.params_uninstall.j2
+    dest: "{{ insappsvr_logfile_path }}/inifile.params"
+  when:  insappsvr_input_install_mode == "createInifile"
+
+- name: Set inifile.params variable
+  set_fact:
+    uninsappsvr_input_file_inifile: "{{ insappsvr_logfile_path }}/inifile.params"
+  when:  insappsvr_input_install_mode == "createInifile"
+
+- name: Check inifile path {{ uninsappsvr_input_file_inifile }}
+  stat:
+    path: "{{ uninsappsvr_input_file_inifile }}"
+  register: uninsappsvr_input_file_initfile_check
+
+- name: Fail when inifile.params does not exist
+  fail:
+   msg: "ERROR: inifile.params does not exist - {{ uninsappsvr_input_file_inifile }} "
+  when: not uninsappsvr_input_file_initfile_check.stat.exists
+
+- name: Check NW_System_Uninstall.completeSystem params in {{ uninsappsvr_input_file_inifile }}
+  shell: "grep NW_System_Uninstall.completeSystem  {{ uninsappsvr_input_file_inifile }} | grep -v '#' | awk '{print $3}'"
+  register: uninsappsvr_initfile_UninstallCompleteSystem_check
+
+- name: Error NW_System_Uninstall.completeSystem wrong
+  fail:
+    msg: "ERROR: NW_System_Uninstall.completeSystem wrong in {{ uninsappsvr_input_file_inifile }} - {{ uninsappsvr_initfile_UninstallCompleteSystem_check.stdout }}"
+  when: uninsappsvr_initfile_UninstallCompleteSystem_check.stdout != "false"
+
+- name: Error NW_System_Uninstall.completeSystem missing
+  fail:
+    msg: "ERROR: NW_System_Uninstall.completeSystem is missing in {{ uninsappsvr_input_file_inifile }}"
+  when: uninsappsvr_initfile_UninstallCompleteSystem_check.stdout == ""
+
+- name: Check NW_uninstallDB.uninstallDB params in {{ uninsappsvr_input_file_inifile }}
+  shell: "grep NW_uninstallDB.uninstallDB  {{ uninsappsvr_input_file_inifile }} | grep -v '#' | awk '{print $3}'"
+  register: uninsappsvr_initfile_NW_uninstallDB_check
+
+- name: Error NW_uninstallDB.uninstallDB wrong
+  fail:
+    msg: "ERROR: NW_uninstallDB.uninstallDB wrong in {{ uninsappsvr_input_file_inifile }} - {{ uninsappsvr_initfile_UninstallCompleteSystem_check.stdout }}"
+  when: uninsappsvr_initfile_NW_uninstallDB_check.stdout != "false"
+
+- name: Error NW_uninstallDB.uninstallDB missing
+  fail:
+    msg: "ERROR: NW_uninstallDB.uninstallDB is missing in {{ uninsappsvr_input_file_inifile }}"
+  when: uninsappsvr_initfile_NW_uninstallDB_check.stdout == ""
+
+- name: Check NW_readProfileDir.profileDir params in {{ uninsappsvr_input_file_inifile }}
+  shell: "grep NW_readProfileDir.profileDir  {{ uninsappsvr_input_file_inifile }} | grep -v '#' | awk '{print $3}'"
+  register: uninsappsvr_initfile_NW_readProfileDir_check
+
+- name: Error NW_readProfileDir.profileDir wrong
+  fail:
+    msg: "ERROR: NW_readProfileDir.profileDir wrong in {{ uninsappsvr_input_file_inifile }} - {{ uninsappsvr_initfile_UninstallCompleteSystem_check.stdout }}"
+  when: uninsappsvr_initfile_NW_readProfileDir_check.stdout == ""
+
+- name: Check {{ uninsappsvr_initfile_NW_readProfileDir_check.stdout }}
+  stat:
+    path: "{{ uninsappsvr_initfile_NW_readProfileDir_check.stdout }}"
+  register: uninsappsvr_chk_usr_sap_profile
+
+- name: fail when the profile directory does not exist
+  fail:
+   msg: "ERROR: the profile directory {{ uninsappsvr_initfile_NW_readProfileDir_check.stdout }} does not exist"
+  when: not uninsappsvr_chk_usr_sap_profile.stat.exists
+
+- name: Check NW_Uninstall:GENERIC.IND.PD params in {{ insappsvr_input_file_initfile }}
+  shell: "grep 'NW_Uninstall:GENERIC.IND.PD' {{ uninsappsvr_input_file_inifile }} | grep '#'"
+  register: uninsappsvr_initfile_NW_uninstall_check
+
+- name: Error NW_Uninstall:GENERIC.IND.PD wrong
+  fail:
+    msg: "ERROR: NW_Uninstall:GENERIC.IND.PD wrong in {{ uninsappsvr_input_file_inifile }} - {{ uninsappsvr_initfile_NW_uninstall_check.stdout }}"
+  when: uninsappsvr_initfile_NW_uninstall_check.stdout == ""
+
+- name: Check NW_System_Uninstall.instanceNumberList params in {{ uninsappsvr_input_file_inifile }}
+  shell: "grep NW_System_Uninstall.instanceNumberList  {{ uninsappsvr_input_file_inifile }} | grep -v '#' | awk '{print $3}'"
+  register: uninsappsvr_initfile_NW_System_Uninstall_check
+
+- name: Error NW_System_Uninstall.instanceNumberList wrong
+  fail:
+    msg: "ERROR: NW_System_Uninstall.instanceNumberList wrong in {{ uninsappsvr_input_file_inifile }} - {{ uninsappsvr_initfile_NW_System_Uninstall_check.stdout }}"
+  when: uninsappsvr_initfile_NW_System_Uninstall_check.stdout | int >99 or uninsappsvr_initfile_NW_System_Uninstall_check.stdout | int <0 or uninsappsvr_initfile_NW_System_Uninstall_check.stdout == ""
+
+- name: Uninstall App server
+  command: "./sapinst SAPINST_INPUT_PARAMETERS_URL={{ uninsappsvr_input_file_inifile }} SAPINST_EXECUTE_PRODUCT_ID=NW_Uninstall:GENERIC.IND.PD SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false"
+  register: insappsvr_cmd_install_sap_appserver
+  args:
+    chdir: "{{ insappsvr_dir_swpm_managednode }}"
+
+- name: Save output to log file
+  copy:
+    content: "{{ insappsvr_cmd_install_sap_appserver.stdout }}"
+    dest: "{{ insappsvr_logfile_path }}/{{ insappsvr_timestamp_for_logfile }}"

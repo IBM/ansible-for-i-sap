@@ -68,5 +68,3 @@ html_context = {
 master_doc = 'index'
 
 
-
-

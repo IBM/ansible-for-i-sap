@@ -19,7 +19,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Role start_sap" href="start_sap.html" />
-    <link rel="prev" title="Role install_saphostagent" href="install_saphostagent.html" /> 
+    <link rel="prev" title="Role sap_install_app_server" href="sap_install_app_server.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,8 +44,10 @@
 <p class="caption" role="heading"><span class="caption-text">Available roles</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install_saphostagent.html">Role install_saphostagent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sap_install_app_server.html">Role sap_install_app_server</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Role sap_opsyscheck</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tags">Tags</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#variables">Variables</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#remarks">Remarks:</a></li>
 </ul>
@@ -91,10 +93,13 @@
 <span id="ibm-ansible-for-i-sap-docsite-sap-opsyscheck"></span><h1><a class="toc-backref" href="#id5">Role sap_opsyscheck</a><a class="headerlink" href="#role-sap-opsyscheck" title="Permalink to this headline"></a></h1>
 <p>The role sap_opsyscheck is checking some basic operating system settings that are required to run SAP applications on the operating system IBM i smoothly. It can be executed prior to the first SAP installation on a new system or partition with the operating system IBM i or as a “health check” on systems or partitions where SAP is already installed. The following checks will be performed:</p>
 <ul class="simple">
-<li><p>Check if the user profile used to execute the Ansible role has at least the special authorities <em>*ALLOBJ</em> and <em>*SECADM</em>.</p></li>
+<li><p>Check if the user profile used to execute the Ansible role has at least the special authorities <em>*ALLOBJ</em>, <em>*SECADM</em> and <em>*JOBCTL</em>.</p></li>
 <li><p>Check if the SAP Host Agent is installed. If it is installed, show release level and patch information.</p></li>
 <li><p>Show the release level of the installed operating system.</p></li>
 <li><p>Check the usage (in percent) of the system auxiliary storage pool (ASP) and compare it with the threshold that can be configured in the IBM i system service tools (STRSST).</p></li>
+<li><p>Check the status of the database cross reference (XREF) files on the host.</p></li>
+<li><p>Show the group ID (GID) of user profile R3GROUP and check if it is the same on all specified hosts.</p></li>
+<li><p>Check the fill level of the job tables and issue a warning if they are more filled than specified (default: 10%).</p></li>
 </ul>
 <p>During the execution of the role sap_opsyscheck, the directory specified in <code class="docutils literal notranslate"><span class="pre">sapopsyschk_dir_temp_managednode</span></code> will be created if it does not exist. At the end of the execution, the directory and its contents will be deleted.</p>
 <div class="contents topic" id="table-of-contents">
@@ -103,13 +108,14 @@
 <li><p><a class="reference internal" href="#role-sap-opsyscheck" id="id5">Role sap_opsyscheck</a></p>
 <ul>
 <li><p><a class="reference internal" href="#requirements" id="id6">Requirements</a></p></li>
-<li><p><a class="reference internal" href="#variables" id="id7">Variables</a></p></li>
-<li><p><a class="reference internal" href="#defaults" id="id8">Defaults</a></p></li>
-<li><p><a class="reference internal" href="#dependencies" id="id9">Dependencies</a></p></li>
-<li><p><a class="reference internal" href="#example-playbook" id="id10">Example Playbook</a></p></li>
-<li><p><a class="reference internal" href="#license" id="id11">License</a></p></li>
-<li><p><a class="reference internal" href="#author-information" id="id12">Author Information</a></p></li>
-<li><p><a class="reference internal" href="#copyright" id="id13">Copyright</a></p></li>
+<li><p><a class="reference internal" href="#tags" id="id7">Tags</a></p></li>
+<li><p><a class="reference internal" href="#variables" id="id8">Variables</a></p></li>
+<li><p><a class="reference internal" href="#defaults" id="id9">Defaults</a></p></li>
+<li><p><a class="reference internal" href="#dependencies" id="id10">Dependencies</a></p></li>
+<li><p><a class="reference internal" href="#example-playbook" id="id11">Example Playbook</a></p></li>
+<li><p><a class="reference internal" href="#license" id="id12">License</a></p></li>
+<li><p><a class="reference internal" href="#author-information" id="id13">Author Information</a></p></li>
+<li><p><a class="reference internal" href="#copyright" id="id14">Copyright</a></p></li>
 </ul>
 </li>
 </ul>
@@ -117,10 +123,56 @@
 <section id="requirements">
 <h2><a class="toc-backref" href="#id6">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this headline"></a></h2>
 <p>This role is intended for the operating system IBM i. The target system must be enabled to execute Ansible playbooks. For details, see the prerequisites section in <a class="reference internal" href="install_and_config.html#ibm-ansible-for-i-sap-docsite-install-and-config-prerequisites"><span class="std std-ref">Ansible Content for IBM Power Systems - IBM i with SAP Software</span></a>.</p>
-<p>The role sap_opsyscheck must be executed as user profile QSECOFR or a user profile with similar authorities, user class <em>*SECOFR</em> or at least special authorities <em>*ALLOBJ</em> and <em>*SECADM</em>. If the user profile does not have these special authorities, the results of the role are unpredictable.</p>
+<p>The role sap_opsyscheck must be executed as user profile QSECOFR or a user profile with similar authorities, user class <em>*SECOFR</em> or at least special authorities <em>*ALLOBJ</em>, <em>*SECADM</em> and <em>*JOBCTL</em>. If the user profile does not have these special authorities, the results of the role are unpredictable.</p>
+</section>
+<section id="tags">
+<h2><a class="toc-backref" href="#id7">Tags</a><a class="headerlink" href="#tags" title="Permalink to this headline"></a></h2>
+<p>Specify one or multiple of the following tags (separated by comma) to specify what checks you want to perform. If you do not specify a tag or the tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">all</span></code>, all checks will be performed.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Tag</p></th>
+<th class="head"><p>Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">user_check</span></code></p></td>
+<td><p>Check if the current user has at least the special authorities
+<em>*ALLOBJ</em>, <em>*SECADM</em> and <em>*JOBCTL</em>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sap_host_agent_check</span></code></p></td>
+<td><p>Check if the SAP Host Agent is installed and display
+release and patch level if found.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">os_version</span></code></p></td>
+<td><p>Display the release level of the operating system.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">asp_check</span></code></p></td>
+<td><p>Display the total capacity, capacity used and percentage used
+of the system ASP and issue a warning if the defined threshold
+is exceeded.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">r3group_id</span></code></p></td>
+<td><p>Show the group ID (GID) of user profile R3GROUP and compare id
+with the group ID on all specified systems.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">xref_status</span></code></p></td>
+<td><p>Check the status of the database cross reference (XREF) files
+on the host.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">job_tables</span></code></p></td>
+<td><p>Check the status of the job tables and issue a warning if they
+are more used than specified in variable
+<code class="docutils literal notranslate"><span class="pre">sapopsyschk_asp_threshold</span></code> (default: 10%).</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="variables">
-<h2><a class="toc-backref" href="#id7">Variables</a><a class="headerlink" href="#variables" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id8">Variables</a><a class="headerlink" href="#variables" title="Permalink to this headline"></a></h2>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 31%" />
@@ -157,7 +209,7 @@
 </section>
 </section>
 <section id="defaults">
-<h2><a class="toc-backref" href="#id8">Defaults</a><a class="headerlink" href="#defaults" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id9">Defaults</a><a class="headerlink" href="#defaults" title="Permalink to this headline"></a></h2>
 <p>Suggested default values are provided in defaults/main.yml:</p>
 <table class="docutils align-default">
 <colgroup>
@@ -173,15 +225,18 @@
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sapopsyschk_dir_temp_managednode</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;/tmp/ansible&quot;</span></code></p></td>
 </tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sapopsyschk_job_tables_percent_input</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;10_&quot;</span></code></p></td>
+</tr>
 </tbody>
 </table>
 </section>
 <section id="dependencies">
-<h2><a class="toc-backref" href="#id9">Dependencies</a><a class="headerlink" href="#dependencies" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id10">Dependencies</a><a class="headerlink" href="#dependencies" title="Permalink to this headline"></a></h2>
 <p>None.</p>
 </section>
 <section id="example-playbook">
-<h2><a class="toc-backref" href="#id10">Example Playbook</a><a class="headerlink" href="#example-playbook" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id11">Example Playbook</a><a class="headerlink" href="#example-playbook" title="Permalink to this headline"></a></h2>
 <p>The example playbook is based on the assumption that a configuration file and an inventory file with contents similar to the <a class="reference internal" href="install_and_config.html#ibm-ansible-for-i-sap-docsite-install-and-config-configuration"><span class="std std-ref">configuration documentation</span></a> exist in the current directory. The necessary archive must have been downloaded from the SAP Software Distribution Center and stored in directory /tmp/downloads/saphostagent. The example playbook in the current directory is named sap_opsyscheck.yml and has the following contents:</p>
 <div class="highlight-YAML notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ibmi_servers</span><span class="w"></span>
 <span class="w">  </span><span class="nt">roles</span><span class="p">:</span><span class="w"></span>
@@ -194,15 +249,15 @@
 </div>
 </section>
 <section id="license">
-<h2><a class="toc-backref" href="#id11">License</a><a class="headerlink" href="#license" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id12">License</a><a class="headerlink" href="#license" title="Permalink to this headline"></a></h2>
 <p>This collection is licensed under the <a class="reference external" href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 license</a>.</p>
 </section>
 <section id="author-information">
-<h2><a class="toc-backref" href="#id12">Author Information</a><a class="headerlink" href="#author-information" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id13">Author Information</a><a class="headerlink" href="#author-information" title="Permalink to this headline"></a></h2>
 <p>SAP on IBM Power Development Team</p>
 </section>
 <section id="copyright">
-<h2><a class="toc-backref" href="#id13">Copyright</a><a class="headerlink" href="#copyright" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id14">Copyright</a><a class="headerlink" href="#copyright" title="Permalink to this headline"></a></h2>
 <p>Copyright IBM Corporation 2022</p>
 </section>
 </section>
@@ -211,7 +266,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="install_saphostagent.html" class="btn btn-neutral float-left" title="Role install_saphostagent" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sap_install_app_server.html" class="btn btn-neutral float-left" title="Role sap_install_app_server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="start_sap.html" class="btn btn-neutral float-right" title="Role start_sap" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

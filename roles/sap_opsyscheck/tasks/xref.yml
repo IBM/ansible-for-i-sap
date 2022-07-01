@@ -1,0 +1,35 @@
+---
+#   Copyright 2022 IBM Corporation
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+###########################################
+# tasks file for r3group_id_check
+###########################################
+
+- name: Check XREF-Status
+  shell:
+    cmd: system "RCLDBXREF OPTION(*CHECK)"
+  register: xref_status_output
+  ignore_errors: True
+  #  failed_when: xref_status_output.rc > 200
+
+- name: Show XREF-Status
+  debug:
+    msg: "OK: {{ xref_status_output.stdout }}"
+  when: "'CPC32AC' in xref_status_output.stdout"
+
+- name: Show XREF-Status
+  debug:
+    msg: "WARNING: {{ xref_status_output.stderr }}"
+  when: "'CPF32AC' in xref_status_output.stderr"

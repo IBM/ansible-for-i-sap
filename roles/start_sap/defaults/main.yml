@@ -23,5 +23,7 @@ startsap_ordered_list_instance_types:
   - D
   - J
   - JC
+  - SMDA
 startsap_sapstartsrv_user: "{{ startsap_input_sap_sid | lower }}adm"
 startsap_input_waitforstarted: "1200"
+startsap_env_classicuserconcept: "N"

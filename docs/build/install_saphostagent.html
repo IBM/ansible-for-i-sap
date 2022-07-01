@@ -18,7 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Role sap_opsyscheck" href="sap_opsyscheck.html" />
+    <link rel="next" title="Role sap_install_app_server" href="sap_install_app_server.html" />
     <link rel="prev" title="Installation and configuration" href="install_and_config.html" /> 
 </head>
 
@@ -45,6 +45,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Role install_saphostagent</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tags">Tags</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#variables">Variables</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#remarks">Remarks:</a></li>
 </ul>
@@ -57,6 +58,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#copyright">Copyright</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="sap_install_app_server.html">Role sap_install_app_server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sap_opsyscheck.html">Role sap_opsyscheck</a></li>
 <li class="toctree-l1"><a class="reference internal" href="start_sap.html">Role start_sap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stop_sap.html">Role stop_sap</a></li>
@@ -98,13 +100,14 @@
 <li><p><a class="reference internal" href="#role-install-saphostagent" id="id13">Role install_saphostagent</a></p>
 <ul>
 <li><p><a class="reference internal" href="#requirements" id="id14">Requirements</a></p></li>
-<li><p><a class="reference internal" href="#variables" id="id15">Variables</a></p></li>
-<li><p><a class="reference internal" href="#defaults" id="id16">Defaults</a></p></li>
-<li><p><a class="reference internal" href="#dependencies" id="id17">Dependencies</a></p></li>
-<li><p><a class="reference internal" href="#example-playbook" id="id18">Example Playbook</a></p></li>
-<li><p><a class="reference internal" href="#license" id="id19">License</a></p></li>
-<li><p><a class="reference internal" href="#author-information" id="id20">Author Information</a></p></li>
-<li><p><a class="reference internal" href="#copyright" id="id21">Copyright</a></p></li>
+<li><p><a class="reference internal" href="#tags" id="id15">Tags</a></p></li>
+<li><p><a class="reference internal" href="#variables" id="id16">Variables</a></p></li>
+<li><p><a class="reference internal" href="#defaults" id="id17">Defaults</a></p></li>
+<li><p><a class="reference internal" href="#dependencies" id="id18">Dependencies</a></p></li>
+<li><p><a class="reference internal" href="#example-playbook" id="id19">Example Playbook</a></p></li>
+<li><p><a class="reference internal" href="#license" id="id20">License</a></p></li>
+<li><p><a class="reference internal" href="#author-information" id="id21">Author Information</a></p></li>
+<li><p><a class="reference internal" href="#copyright" id="id22">Copyright</a></p></li>
 </ul>
 </li>
 </ul>
@@ -112,10 +115,30 @@
 <section id="requirements">
 <h2><a class="toc-backref" href="#id14">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this headline"></a></h2>
 <p>This role is intended for the operating system IBM i. The target system must be enabled to execute Ansible playbooks. For details, see the prerequisites section in <a class="reference internal" href="install_and_config.html#ibm-ansible-for-i-sap-docsite-install-and-config-prerequisites"><span class="std std-ref">Ansible Content for IBM Power Systems - IBM i with SAP Software</span></a>.</p>
-<p>The role install_saphostagent must be executed as user profile QSECOFR or a user profile with similar authorities, user class <em>*SECOFR</em> or at least special authorities <em>*ALLOBJ</em> and <em>*SECADM</em>.</p>
+<p>The role install_saphostagent must be executed as user profile QSECOFR or a user profile with similar authorities, user class <em>*SECOFR</em> or at least special authorities <em>*ALLOBJ</em>, <em>*SECADM</em> and <em>*JOBCTL</em>.</p>
+</section>
+<section id="tags">
+<h2><a class="toc-backref" href="#id15">Tags</a><a class="headerlink" href="#tags" title="Permalink to this headline"></a></h2>
+<p>The following tag can be specified optionally. Omitting the tag or specifying tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">all</span></code> has the same effect.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Tag</p></th>
+<th class="head"><p>Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">install_saphostagent</span></code></p></td>
+<td><p>Install the SAP Host Agent.</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="variables">
-<h2><a class="toc-backref" href="#id15">Variables</a><a class="headerlink" href="#variables" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id16">Variables</a><a class="headerlink" href="#variables" title="Permalink to this headline"></a></h2>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 29%" />
@@ -182,7 +205,7 @@
 </section>
 </section>
 <section id="defaults">
-<h2><a class="toc-backref" href="#id16">Defaults</a><a class="headerlink" href="#defaults" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id17">Defaults</a><a class="headerlink" href="#defaults" title="Permalink to this headline"></a></h2>
 <p>Suggested default values are provided in defaults/main.yml:</p>
 <table class="docutils align-default">
 <colgroup>
@@ -217,11 +240,11 @@
 </table>
 </section>
 <section id="dependencies">
-<h2><a class="toc-backref" href="#id17">Dependencies</a><a class="headerlink" href="#dependencies" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id18">Dependencies</a><a class="headerlink" href="#dependencies" title="Permalink to this headline"></a></h2>
 <p>None.</p>
 </section>
 <section id="example-playbook">
-<h2><a class="toc-backref" href="#id18">Example Playbook</a><a class="headerlink" href="#example-playbook" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id19">Example Playbook</a><a class="headerlink" href="#example-playbook" title="Permalink to this headline"></a></h2>
 <p>The example playbook is based on the assumption that a configuration file and an inventory file with contents similar to the <a class="reference internal" href="install_and_config.html#ibm-ansible-for-i-sap-docsite-install-and-config-configuration"><span class="std std-ref">configuration documentation</span></a> exist in the current directory. The necessary SAP Host Agent archive must have been downloaded from the SAP Software Distribution Center and stored in directory /tmp/downloads/saphostagent. The SAPCAR executable is available from a previous version of the SAP Host Agent in directory /usr/sap/hostctrl/exe or has been downloaded from the SAP Software Distribution Center into the download directory. The example playbook in the current directory is named install_saphostagent.yml and has the following contents:</p>
 <div class="highlight-YAML notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ibmi_servers</span><span class="w"></span>
 <span class="w">  </span><span class="nt">vars</span><span class="p">:</span><span class="w"></span>
@@ -236,15 +259,15 @@
 </div>
 </section>
 <section id="license">
-<h2><a class="toc-backref" href="#id19">License</a><a class="headerlink" href="#license" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id20">License</a><a class="headerlink" href="#license" title="Permalink to this headline"></a></h2>
 <p>This collection is licensed under the <a class="reference external" href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 license</a>.</p>
 </section>
 <section id="author-information">
-<h2><a class="toc-backref" href="#id20">Author Information</a><a class="headerlink" href="#author-information" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id21">Author Information</a><a class="headerlink" href="#author-information" title="Permalink to this headline"></a></h2>
 <p>SAP on IBM Power Development Team</p>
 </section>
 <section id="copyright">
-<h2><a class="toc-backref" href="#id21">Copyright</a><a class="headerlink" href="#copyright" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id22">Copyright</a><a class="headerlink" href="#copyright" title="Permalink to this headline"></a></h2>
 <p>Copyright IBM Corporation 2021,2022</p>
 </section>
 </section>
@@ -254,7 +277,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="install_and_config.html" class="btn btn-neutral float-left" title="Installation and configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="sap_opsyscheck.html" class="btn btn-neutral float-right" title="Role sap_opsyscheck" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="sap_install_app_server.html" class="btn btn-neutral float-right" title="Role sap_install_app_server" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

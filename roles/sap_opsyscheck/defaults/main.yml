@@ -15,3 +15,4 @@
 
 # defaults file for sap_opsyscheck
 sapopsyschk_dir_temp_managednode: "/tmp/ansible"
+sapopsyschk_job_tables_percent_input: 10_

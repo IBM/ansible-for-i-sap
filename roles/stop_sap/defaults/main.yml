@@ -24,4 +24,5 @@ stopsap_ordered_list_instance_types:
   - D
   - J
   - JC
+  - SMDA
 stopsap_input_waitforstopped: "1200"

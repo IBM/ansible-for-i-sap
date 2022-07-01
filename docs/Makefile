@@ -3,18 +3,10 @@
 #
 
 all:
- sphinx-build -b html docsite/rst build
- touch build/.nojekyll
+	sphinx-build -b html docsite/rst build
+	touch build/.nojekyll
 
 clean:
- rm -rf build
-
-
-
-
-
-
-
-
+	rm -rf build
 
 

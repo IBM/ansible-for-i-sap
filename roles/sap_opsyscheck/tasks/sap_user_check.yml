@@ -57,6 +57,16 @@
     msg: "OK: User profile {{ ansible_user_id }} has special authority *SECADM."
   when: "'SECADM' in sapopsyschk_user_output.stdout"
 
+- name: Check User have special authority JOBCTL
+  debug:
+    msg: "WARNING: User profile {{ ansible_user_id }} does not have special authority *JOBCTL."
+  when: "'JOBCTL' not in sapopsyschk_user_output.stdout"
+
+- name: Check User have special authority JOBCTL
+  debug:
+    msg: "OK: User profile {{ ansible_user_id }} has special authority *JOBCTL."
+  when: "'JOBCTL' in sapopsyschk_user_output.stdout"
+
 - name: Ensure {{ sapopsyschk_dir_temp_managednode }} directory is removed from {{ inventory_hostname }}
   file:
     path: "{{ sapopsyschk_dir_temp_managednode }}"

@@ -14,7 +14,7 @@
 #   limitations under the License.
 
 ###########################################
-# tasks file for sap_host_agent_check
+# tasks file for asp
 ###########################################
 - name: Ensure directory {{ sapopsyschk_dir_temp_managednode }} exists
   file:
@@ -30,7 +30,7 @@
 
 - name: ASP Size check STORAGE_THRESHOLD_PERCENTAGE
   shell:
-    cmd: db2 "SELECT TOTAL_CAPACITY, TOTAL_CAPACITY_AVAILABLE, STORAGE_THRESHOLD_PERCENTAGE FROM qsys2.asp_info WHERE ASP_NUMBER = 1" | grep -n 2 | awk '{ print $4; }'
+    cmd: db2 "SELECT TOTAL_CAPACITY, TOTAL_CAPACITY_AVAILABLE, STORAGE_THRESHOLD_PERCENTAGE FROM qsys2.asp_info WHERE ASP_NUMBER = 1" | awk 'NR == 4 { print $3}'
   args:
     chdir: "{{ sapopsyschk_dir_temp_managednode }}"
   register: sapopsyschk_asp_threshold_default
@@ -42,19 +42,24 @@
 
 - name: ASP Size check TOTAL_CAPACITY
   shell:
-    cmd: db2 "SELECT TOTAL_CAPACITY, TOTAL_CAPACITY_AVAILABLE, STORAGE_THRESHOLD_PERCENTAGE FROM qsys2.asp_info WHERE ASP_NUMBER = 1" | grep -n 2 | awk '{ print $2; }'
+    cmd: db2 "SELECT TOTAL_CAPACITY, TOTAL_CAPACITY_AVAILABLE, STORAGE_THRESHOLD_PERCENTAGE FROM qsys2.asp_info WHERE ASP_NUMBER = 1" | awk 'NR == 4 { print $1}'
   args:
     chdir: "{{ sapopsyschk_dir_temp_managednode }}"
   register: sapopsyschk_asp_total_capacity_output
 
 - name: ASP Size check TOTAL_CAPACITY_AVAILABLE
   shell:
-    cmd: db2 "SELECT TOTAL_CAPACITY, TOTAL_CAPACITY_AVAILABLE, STORAGE_THRESHOLD_PERCENTAGE FROM qsys2.asp_info WHERE ASP_NUMBER = 1" | grep -n 2 | awk '{ print $3; }'
+    cmd: db2 "SELECT TOTAL_CAPACITY, TOTAL_CAPACITY_AVAILABLE, STORAGE_THRESHOLD_PERCENTAGE FROM qsys2.asp_info WHERE ASP_NUMBER = 1" | awk 'NR == 4 { print $2}'
   register: sapopsyschk_asp_total_capacity_available_output
 
 - name: Set variable for ASP Size in percent
   set_fact:
     sapopsyschk_asp_total_capacity_percentage: "{{ '{:0.2f}'.format(100 * (( sapopsyschk_asp_total_capacity_output.stdout | int - sapopsyschk_asp_total_capacity_available_output.stdout | int ) / sapopsyschk_asp_total_capacity_output.stdout | int )) }}"
+
+- name: ASP Size check
+  shell:
+    cmd: db2 "SELECT TOTAL_CAPACITY, TOTAL_CAPACITY_AVAILABLE, STORAGE_THRESHOLD_PERCENTAGE FROM qsys2.asp_info"
+  register: sapopsyschk_asp_size_output
 
 - name: Show used ASP
   debug:
@@ -65,6 +70,10 @@
   debug:
     msg:  "WARNING - System ASP used {{ sapopsyschk_asp_total_capacity_percentage }}%"
   when: sapopsyschk_asp_total_capacity_percentage | int >=sapopsyschk_asp_threshold | int
+
+- name: Show all used ASP
+  debug:
+    msg: "{{ sapopsyschk_asp_size_output.stdout_lines }}"
 
 - name: Ensure {{ sapopsyschk_dir_temp_managednode }} directory is removed from {{ inventory_hostname }}
   file:

@@ -2,8 +2,10 @@
 sections:
   - title: Ansible Content for IBM Power Systems - IBM i with SAP Software
     toctree:
-      - general_information
+      - index
+      - install_and_config
       - install_saphostagent
+      - sap_install_app_server
       - sap_opsyscheck
       - start_sap
       - stop_sap

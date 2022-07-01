@@ -1,0 +1,43 @@
+---
+#   Copyright 2022 IBM Corporation
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+###########################################
+# tasks file for sap_stop_instances
+###########################################
+
+- name: Stop SAP instance
+  command: "{{ stopsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ stopsap_sap_sid_profile_name.stdout.split()[2] }} -function InstanceStop {{ item.split()[0]|replace(',', '') }} {{ stopsap_input_sap_instance_nr | default(item.split()[1]|replace(',', '')) }} {{ stopsap_softtimeout }}"
+  environment:
+    LIBPATH: "{{ stopsap_dir_sapctrl_managednode }}"
+  args:
+    chdir: "{{ stopsap_dir_sapctrl_managednode }}"
+  with_items: "{{ stopsap_list_instances_to_stop }}"
+  when: stopsap_input_sap_instance_nr is defined
+
+- name: Stop SAP instances
+  command: "{{ stopsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ stopsap_sap_sid_profile_name.stdout.split()[2] }} -function InstanceStop {{ item.split()[0]|replace(',', '') }} {{ item.split()[1]|replace(',', '') }} {{ stopsap_softtimeout }}"
+  environment:
+    LIBPATH: "{{ stopsap_dir_sapctrl_managednode }}"
+  args:
+    chdir: "{{ stopsap_dir_sapctrl_managednode }}"
+  with_items: "{{ stopsap_list_instances_to_stop }}"
+  when: stopsap_input_sap_instance_nr is undefined
+
+- name: Wait for SAP instances to stop
+  command: "{{ stopsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ stopsap_sap_sid_profile_name.stdout.split()[2] }} -function WaitforStopped {{ stopsap_input_waitforstopped }} 5 "
+  environment:
+    LIBPATH: "{{ stopsap_dir_sapctrl_managednode }}"
+  args:
+    chdir: "{{ stopsap_dir_sapctrl_managednode }}"

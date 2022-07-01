@@ -66,7 +66,42 @@
   fail:
     msg: "Error: System {{ startsap_input_sap_sid  }} does not exist or sapstartsrv was not found."
   when: startsap_list_sap_services == ""
+
+- name: Collect all sap sid from /usr/sap/sapservices
+  shell: "grep sapstartsrv /usr/sap/sapservices | grep -v '^ *#' |  awk -F 'pf=' '{ print $1;}' | awk -F '/' '{ print $4;}'"
+  register: startsap_sap_sid_output
+  when: startsap_input_sap_sid == "*"
+
+- name: Determining the user concept for all sap sid
+  stat:
+    path: "/sapmnt/{{ item }}/profile/.newuserconceptaaa"
+  with_items: "{{ startsap_sap_sid_output.stdout_lines }}"
+  register: startsap_env_classicuserconcept_all_output
+  when: startsap_input_sap_sid == "*"
+
+- name: Determining the user concept for provided sap sid
+  stat:
+    path: "/sapmnt/{{ startsap_input_sap_sid }}/profile/.newuserconcept"
+  register: startsap_env_classicuserconcept_output
+  when: startsap_input_sap_sid != "*"
+
+- name: Set CLASSICUSERCONCEPT to No
+  set_fact:
+    startsap_env_classicuserconcept: N
+  when: startsap_input_sap_sid != "*" and startsap_env_classicuserconcept_output.stat.exists == True
   
+- name: Set CLASSICUSERCONCEPT to Yes
+  set_fact:
+    startsap_env_classicuserconcept: Y
+  when: startsap_input_sap_sid != "*" and startsap_env_classicuserconcept_output.stat.exists == False
+
+- name: Set CLASSICUSERCONCEPT  for all sap sid
+  set_fact:
+    startsap_env_classicuserconcept: "{% if item.stat.exists == true %}N{% else %}Y{% endif %}"
+  when: startsap_input_sap_sid == "*"
+  with_items: "{{ startsap_env_classicuserconcept_all_output.results }}"
+  register: startsap_env_classicuserconcept_all
+
 ######################################################
 # Display SAP start commands
 ######################################################
@@ -84,4 +119,16 @@
   command: "{{ item.split(' -u')[0] }}"
   environment:
     LIBPATH: "{{ item.split()[0]|replace('/sapstartsrv', '') }}"
+    CLASSICUSERCONCEPT: "{{ startsap_env_classicuserconcept }}"
   with_items: "{{ startsap_cmd_sap_services }}"
+  when: startsap_input_sap_sid != "*"
+
+- name: Start SAP services
+  command: "{{ item.0.split(' -u')[0] }}"
+  environment:
+    LIBPATH: "{{ item.0.split()[0]|replace('/sapstartsrv', '') }}"
+    CLASSICUSERCONCEPT: "{{ item.1.ansible_facts.startsap_env_classicuserconcept }}"
+  with_together:
+   -  "{{ startsap_cmd_sap_services }}"
+   -  "{{ startsap_env_classicuserconcept_all.results }}"
+  when: startsap_input_sap_sid == "*"

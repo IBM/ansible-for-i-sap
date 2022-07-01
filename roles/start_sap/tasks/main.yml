@@ -15,20 +15,30 @@
 
 # tasks file for start_sap
 
+- name: TAGS check
+  fail:
+    msg: "Error - Tag {{ ansible_run_tags }} is undefined. The following tags are supported by role start_sap: sap_start_instances, sap_start_all_systems, sap_start_services or all (default)."
+  when:
+    - "not 'sap_start_instances' in ansible_run_tags"
+    - "not 'sap_start_all_systems' in ansible_run_tags"
+    - "not 'sap_start_services' in ansible_run_tags"
+    - "not 'all' in ansible_run_tags"
+  tags: always
+
 # start pre task
 - name: SAP Start pre task
   import_tasks: sap_start_pre.yml
-  tags: sap_start_instance
+  tags: sap_start_instances
 
 # start Instance
 - name: Start Instance
-  import_tasks: sap_start_instance.yml
-  tags: sap_start_instance
+  import_tasks: sap_start_instances.yml
+  tags: sap_start_instances
   
-# start All Instances
-- name: Start All Instances
-  import_tasks: sap_start_all_instances.yml
-  tags: never,sap_start_all_instances
+# start All Systems
+- name: Start All Systems
+  import_tasks: sap_start_all_systems.yml
+  tags: never,sap_start_all_systems
 
 # start Service
 - name: Start Service

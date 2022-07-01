@@ -15,6 +15,15 @@
 
 # tasks file for upgrade_sap_kernel
 
+- name: TAGS check
+  fail:
+    msg: "Error - Tag {{ ansible_run_tags }} is undefined. The following tags are supported by role upgrade_sap_kernel: sap_kernel_upgrade_same_release,sap_kernel_upgrade_new_release or all (default)."
+  when:
+    - "not 'sap_kernel_upgrade_same_release' in ansible_run_tags"
+    - "not 'sap_kernel_upgrade_new_release' in ansible_run_tags"
+    - "not 'all' in ansible_run_tags"
+  tags: always
+
 - name: Prepare SAP kernel upgrade
   import_tasks: sap_kernel_upgrade_prep.yml
   tags: sap_kernel_upgrade_same_release,sap_kernel_upgrade_new_release

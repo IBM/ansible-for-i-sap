@@ -44,6 +44,7 @@
 <p class="caption" role="heading"><span class="caption-text">Available roles</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install_saphostagent.html">Role install_saphostagent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sap_install_app_server.html">Role sap_install_app_server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sap_opsyscheck.html">Role sap_opsyscheck</a></li>
 <li class="toctree-l1"><a class="reference internal" href="start_sap.html">Role start_sap</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Role stop_sap</a><ul>
@@ -90,9 +91,9 @@
              
   <section id="role-stop-sap">
 <span id="ibm-ansible-for-i-sap-docsite-stop-sap"></span><h1><a class="toc-backref" href="#id10">Role stop_sap</a><a class="headerlink" href="#role-stop-sap" title="Permalink to this headline"></a></h1>
-<p>The role stop_sap is used to stop one or multiple SAP instances, either for a given SAP system ID (tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_stop_instance</span></code>) or for all SAP systems that are configured in file /usr/sap/sapservices (tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_stop_all_instances</span></code>). If a requested SAP instance is already inactive, the request will be ignored and no error message will be sent. The role stop_sap is using the sapcontrol command of the SAP Host Agent as suggested in <a class="reference external" href="https://launchpad.support.sap.com/#/notes/1763593">SAP Note 1763593</a>. It requires that the SAP start services for the selected instances are active. By default, the SAP start services are started automatically when the subsystem QUSRWRK is started. If the SAP start services are not active, they can be started by using this role with the tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_start_services</span></code>.</p>
-<p>If the role stop_sap is used with tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_stop_instance</span></code>, it needs the SAP system ID as input in variable <code class="docutils literal notranslate"><span class="pre">stopsap_input_sap_sid</span></code>. An SAP instance number can be provided optionally in variable <code class="docutils literal notranslate"><span class="pre">stopsap_input_sap_instance_nr</span></code>. If an instance number is provided, only this instance is stopped. If no instance number is provided, stop_sap will stop all configured instances for the given SID, also on remote servers in a distributed landscape. It is recommended that the role stop_sap is executed on the logical partition or server that hosts the central services instance (ASCS, SCS), the primary application server instance, or the central instance.</p>
-<p>If the role stop_sap is used with tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_stop_all_instances</span></code>, the values in the variables <code class="docutils literal notranslate"><span class="pre">stopsap_input_sap_sid</span></code> and <code class="docutils literal notranslate"><span class="pre">stopsap_input_sap_instance_nr</span></code> are ignored. Instead, all SAP systems that are configured in file /usr/sap/sapservices will be stopped with all their instances.</p>
+<p>The role stop_sap is used to stop one or multiple SAP instances, either for a given SAP system ID (tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_stop_instances</span></code>) or for all SAP systems that are configured in file /usr/sap/sapservices (tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_stop_all_systems</span></code>). If a requested SAP instance is already inactive, the request will be ignored and no error message will be sent. The role stop_sap is using the sapcontrol command of the SAP Host Agent as suggested in <a class="reference external" href="https://launchpad.support.sap.com/#/notes/1763593">SAP Note 1763593</a>. It requires that the SAP start services for the selected instances are active. By default, the SAP start services are started automatically when the subsystem QUSRWRK is started. If the SAP start services are not active, they can be started by using this role with the tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_start_services</span></code>.</p>
+<p>If the role stop_sap is used with tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_stop_instances</span></code>, it needs the SAP system ID as input in variable <code class="docutils literal notranslate"><span class="pre">stopsap_input_sap_sid</span></code>. An SAP instance number can be provided optionally in variable <code class="docutils literal notranslate"><span class="pre">stopsap_input_sap_instance_nr</span></code>. If an instance number is provided, only this instance is stopped. If no instance number is provided, stop_sap will stop all configured instances for the given SID, also on remote servers in a distributed landscape. It is recommended that the role stop_sap is executed on the logical partition or server that hosts the central services instance (ASCS, SCS), the primary application server instance, or the central instance.</p>
+<p>If the role stop_sap is used with tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_stop_all_systems</span></code>, the values in the variables <code class="docutils literal notranslate"><span class="pre">stopsap_input_sap_sid</span></code> and <code class="docutils literal notranslate"><span class="pre">stopsap_input_sap_instance_nr</span></code> are ignored. Instead, all SAP systems that are configured in file /usr/sap/sapservices will be stopped with all their instances.</p>
 <p>If the role stop_sap is used with tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_stop_services</span></code>, you can specify a SAP system ID in variable <code class="docutils literal notranslate"><span class="pre">stopsap_input_sap_sid</span></code> or the special value <code class="docutils literal notranslate"><span class="pre">&quot;*&quot;</span></code>. If you specify <code class="docutils literal notranslate"><span class="pre">&quot;*&quot;</span></code>, SAP start services will be stopped for all SAP systems that are configured in /usr/sap/sapservices.</p>
 <div class="contents topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
@@ -119,7 +120,7 @@
 </section>
 <section id="tags">
 <h2><a class="toc-backref" href="#id12">Tags</a><a class="headerlink" href="#tags" title="Permalink to this headline"></a></h2>
-<p>Specify one of the following tags to specify what parts of an SAP system you want to stop. If you do not specify a tag, <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_stop_instance</span></code> will be assumed as default. If you misspell the tag, no steps in the role will be executed.</p>
+<p>Specify one of the following tags to specify what parts of an SAP system you want to stop. If you do not specify a tag, <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_stop_instances</span></code> will be assumed as default. If you misspell the tag, an error message will be sent.</p>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 24%" />
@@ -131,12 +132,12 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sap_stop_instance</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sap_stop_instances</span></code></p></td>
 <td><p>One or all instances for a specific SAP system ID are stopped. The SAP system ID must be
 specified in variable <code class="docutils literal notranslate"><span class="pre">stopsap_input_sap_sid</span></code>, the instance number can optionally be
 specified in variable <code class="docutils literal notranslate"><span class="pre">stopsap_input_sap_instance_nr</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sap_stop_all_instances</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sap_stop_all_systems</span></code></p></td>
 <td><p>All instances are stopped for all SAP systems that are configured in file /usr/sap/sapservices.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sap_stop_services</span></code></p></td>
@@ -191,10 +192,10 @@ or for all SAP systems that are configured in file /usr/sap/sapservices when var
 <dd><p>Default provided.</p>
 </dd>
 <dt class="label" id="id7"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
-<dd><p>The variable is only evaluated when the tags <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_stop_instance</span></code> or <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_stop_services</span></code> are set.</p>
+<dd><p>The variable is only evaluated when the tags <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_stop_instances</span></code> or <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_stop_services</span></code> are set.</p>
 </dd>
 <dt class="label" id="id8"><span class="brackets"><a class="fn-backref" href="#id3">3</a></span></dt>
-<dd><p>The variable is only evaluated when the tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_stop_instance</span></code> is set. If the variable is omitted, all instances of the specified SAP system ID will be stopped.</p>
+<dd><p>The variable is only evaluated when the tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">sap_stop_instances</span></code> is set. If the variable is omitted, all instances of the specified SAP system ID will be stopped.</p>
 </dd>
 <dt class="label" id="id9"><span class="brackets"><a class="fn-backref" href="#id4">4</a></span></dt>
 <dd><p>When the parameter is omitted, a hard shutdown is executed.</p>
@@ -243,7 +244,7 @@ or for all SAP systems that are configured in file /usr/sap/sapservices when var
 </pre></div>
 </div>
 <p>To execute this playbook, enter the command:</p>
-<div class="highlight-YAML notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ansible-playbook --verbose stop_sap.yml -t sap_stop_instance</span><span class="w"></span>
+<div class="highlight-YAML notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ansible-playbook --verbose stop_sap.yml -t sap_stop_instances</span><span class="w"></span>
 </pre></div>
 </div>
 </section>

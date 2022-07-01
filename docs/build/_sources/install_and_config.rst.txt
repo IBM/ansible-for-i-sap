@@ -32,7 +32,7 @@ It is recommended that you use a dedicated user profile on IBM i for your Ansibl
 
 or::
 
-    CRTUSRPRF USRPRF(ANSIBLE) PASSWORD(<...>) USRCLS(*PGMR) TEXT('Ansible functional user') SPCAUT(*ALLOBJ *SECADM *JOBCTL *SPLCTL *IOSYSCFG *SAVSYS) OWNER(*USRPRF) LANGID(ENU) CNTRYID(US) CCSID(500) LOCALE(*NONE)
+    CRTUSRPRF USRPRF(ANSIBLE) PASSWORD(<...>) USRCLS(*PGMR) TEXT('Ansible functional user') SPCAUT(*ALLOBJ *SECADM *JOBCTL) OWNER(*USRPRF) LANGID(ENU) CNTRYID(US) CCSID(500) LOCALE(*NONE)
 
 Installation using IBM i Access Client Solutions (ACS)
 ------------------------------------------------------
@@ -188,3 +188,5 @@ SAP on IBM Power Development Team
 
 Copyright
 ---------
+
+Copyright IBM Corporation 2022

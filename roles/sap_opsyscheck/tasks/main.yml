@@ -15,6 +15,20 @@
 
 # tasks file for sap_opsyscheck
 
+- name: TAGS check
+  fail:
+    msg: "Error - Tag {{ ansible_run_tags }} is undefined. The following tags are supported by role sap_opsyscheck: user_check, sap_host_agent_check, os_version, asp_check, r3group_id, xref_status, job_tables or all (default)."
+  when:
+    - "not 'user_check' in ansible_run_tags"
+    - "not 'sap_host_agent_check' in ansible_run_tags"
+    - "not 'os_version' in ansible_run_tags"
+    - "not 'asp_check' in ansible_run_tags"
+    - "not 'r3group_id' in ansible_run_tags"
+    - "not 'xref_status' in ansible_run_tags"
+    - "not 'job_tables' in ansible_run_tags"
+    - "not 'all' in ansible_run_tags"
+  tags: always
+
 - name: Check User
   import_tasks: sap_user_check.yml
   tags: user_check
@@ -30,4 +44,16 @@
 - name: Check ASP
   import_tasks: asp.yml
   tags: asp_check
+
+- name: R3GROUP ID Check
+  import_tasks: r3group_id.yml
+  tags: r3group_id
+
+- name: Check XREF-Status
+  import_tasks: xref.yml
+  tags: xref_status
+
+- name: Check Job Tables
+  import_tasks: job_tables.yml
+  tags: job_tables
 

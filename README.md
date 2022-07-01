@@ -20,16 +20,17 @@ To execute Ansible playbooks for SAP on IBM i, the following is required:
 
 4. You must run Ansible version 2.9 or later on your controlling node (Ansible automation engine).
 
-It is recommended that you use a dedicated user profile on IBM i for your Ansible playbooks. There may be different authority requirements for the individual roles. To avoid authority problems, it is recommended that you create the user profile with user class *\*SECOFR* or with sufficient special authorities, at least *\*SECADM* and *\*ALLOBJ*.
+It is recommended that you use a dedicated user profile on IBM i for your Ansible playbooks. There may be different authority requirements for the individual roles. To avoid authority problems, it is recommended that you create the user profile with user class *\*SECOFR* or with sufficient special authorities, at least *\*SECADM*, *\*ALLOBJ* and *\*JOBCTL*.
 
 ## Usage
 
 The following roles for administrator tasks with SAP on IBM i are provided:
 
 - Installing or upgrading the SAP Host Agent
+- Installing additional application servers on IBM i for IBM Db2 for i or SAP HANA databases
 - Check basic operating system settings
-- Start SAP instances
-- Stop SAP instances
+- Start SAP instances or SAP start services
+- Stop SAP instances or SAP start services
 - Upgrade the SAP kernel
 
 # License

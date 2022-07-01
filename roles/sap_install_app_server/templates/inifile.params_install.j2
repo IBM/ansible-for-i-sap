@@ -1,0 +1,11 @@
+#'{{ insappsvr_input_NW_release }}' #
+# IMPORTANT DO NOT DELETE!!! {{ insappsvr_input_SAPInstDes25Hash }}
+NW_AS.instanceNumber = {{ insappsvr_input_initfile_NW_AS_instanceNumber }}
+NW_getLoadType.loadType = SAP
+NW_Delete_Sapinst_Users.removeUsers = true
+NW_GetMasterPassword.masterPwd = {{ insappsvr_input_NW_GetMasterPassword }}
+NW_System.installSAPHostAgent = false
+NW_readProfileDir.profileDir = /sapmnt/{{ insappsvr_input_sap_sid }}/profile
+archives.downloadBasket={{ insappsvr_input_dir_downloadbasket_managednode }}
+nwUsers.sapsysGID = {{ insappsvr_input_nwUsers_sapsysGID }}
+nwUsers.sidAdmUID = {{ insappsvr_input_nwUsers_sidAdmUID }}

@@ -1,0 +1,240 @@
+---
+#   Copyright 2022 IBM Corporation
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+# tasks file for sap_install_app_server
+#
+- name: Create Timestamp for LOG file
+  ansible.builtin.set_fact:
+    insappsvr_timestamp_for_logfile: "CommandLineOutput_sap_install_app_server_{{ ansible_date_time.iso8601_basic_short }}.log"
+
+- name: Create ansible tmp directory
+  file:
+    path: "{{ insappsvr_logfile_path }}"
+    state: directory
+
+- name: Create inifile from template DB4
+  ansible.builtin.template:
+    src: inifile.params_install.j2
+    dest: "{{ insappsvr_logfile_path }}/inifile.params"
+  when:  insappsvr_input_install_mode == "createInifile"
+
+- name: Create inifile from template HDB
+  ansible.builtin.template:
+    src: inifile.params_install_HDB.j2
+    dest: "{{ insappsvr_logfile_path }}/inifile.params"
+  when:  insappsvr_input_install_mode == "createInifile" and insappsvr_input_SAPDBType == "HDB"
+
+- name: Create pkey from template
+  ansible.builtin.template:
+    src: instkey.pkey.j2
+    dest: "{{ insappsvr_logfile_path }}/instkey.pkey"
+  when:  insappsvr_input_install_mode == "createInifile"
+
+- name: Set inifile.params variable
+  set_fact:
+    insappsvr_input_file_inifile: "{{ insappsvr_logfile_path }}/inifile.params"
+  when:  insappsvr_input_install_mode == "createInifile"
+
+- name: Check inifile path {{ insappsvr_input_file_inifile }}
+  stat:
+    path: "{{ insappsvr_input_file_inifile }}"
+  register: insappsvr_input_inifile_check
+
+- name: Fail when inifile.params does not exist
+  fail:
+   msg: "ERROR: inifile.params does not exist - {{ insappsvr_input_file_inifile }} "
+  when: not insappsvr_input_inifile_check.stat.exists
+
+- name: Check NW_AS.instanceNumber params in {{ insappsvr_input_file_inifile }}
+  shell: "grep NW_AS.instanceNumber  {{ insappsvr_input_file_inifile }} | grep -v '#' | awk '{print $3}'"
+  register: insappsvr_initfile_NW_AS_instanceNumber_check
+
+- name: Error NW_AS.instanceNumber wrong
+  fail:
+    msg: "ERROR: NW_AS.instanceNumber wrong in {{ insappsvr_input_file_inifile }} - {{ insappsvr_initfile_NW_AS_instanceNumber_check.stdout }}"
+  when: insappsvr_initfile_NW_AS_instanceNumber_check.stdout | int <0 or insappsvr_initfile_NW_AS_instanceNumber_check.stdout | int >99 or insappsvr_initfile_NW_AS_instanceNumber_check.stdout == ""
+
+- name: Check NW_System.installSAPHostAgent params in {{ insappsvr_input_file_inifile }}
+  shell: "grep NW_System.installSAPHostAgent  {{ insappsvr_input_file_inifile }} | grep -v '#' | awk '{print $3}'"
+  register: insappsvr_initfile_NW_System_installSAPHostAgent_check
+
+- name: Error NW_System.installSAPHostAgent wrong
+  fail:
+    msg: "ERROR: NW_System.installSAPHostAgent wrong in {{ insappsvr_input_file_inifile }} - {{ insappsvr_initfile_NW_System_installSAPHostAgent_check.stdout }}"
+  when: insappsvr_initfile_NW_System_installSAPHostAgent_check.stdout != "false"
+
+- name: Check NW_getLoadType.loadType params in {{ insappsvr_input_file_inifile }}
+  shell: "grep NW_getLoadType.loadType {{ insappsvr_input_file_inifile }} | grep -v '#' | awk '{print $3}'"
+  register: insappsvr_initfile_NW_getLoadType_loadType_check
+
+- name: Error NW_getLoadType.loadType wrong
+  fail:
+    msg: "ERROR: NW_getLoadType.loadType wrong in {{insappsvr_input_file_inifile }} - {{ insappsvr_initfile_NW_getLoadType_loadType_check.stdout }}"
+  when: insappsvr_initfile_NW_getLoadType_loadType_check.stdout != "SAP"
+
+- name: Check NW_readProfileDir.profileDir params in {{ insappsvr_input_file_inifile }}
+  shell: "grep NW_readProfileDir.profileDir  {{ insappsvr_input_file_inifile }} | grep -v '#' | awk '{print $3}'"
+  register: insappsvr_initfile_NW_readProfileDir_check
+
+- name: Error NW_readProfileDir.profileDir wrong
+  fail:
+    msg: "ERROR: NW_readProfileDir.profileDir wrong in {{ insappsvr_input_file_inifile }} - {{ insappsvr_initfile_NW_readProfileDir_check.stdout }}"
+  when: insappsvr_initfile_NW_readProfileDir_check.stdout == ""
+
+- name: Check SAPInstDes25Hash params in {{ insappsvr_input_file_inifile }}
+  shell: "grep SAPInstDes25Hash {{ insappsvr_input_file_inifile }} | cut -d '=' -f2"
+  register: insappsvr_initfile_SAPInstDes25Hash_check
+
+- name: Error SAPInstDes25Hash wrong
+  fail:
+    msg: "ERROR: SAPInstDes25Hash wrong in {{ insappsvr_input_file_inifile }} - {{ insappsvr_initfile_SAPInstDes25Hash_check.stdout }}"
+  when: insappsvr_initfile_SAPInstDes25Hash_check.stdout == ""
+
+- name: Check NW_GetMasterPassword.masterPwd params in {{ insappsvr_input_file_inifile }}
+  shell: "grep NW_GetMasterPassword.masterPwd {{ insappsvr_input_file_inifile }} | grep des25 | cut -d '=' -f2"
+  register: insappsvr_initfile_NW_GetMasterPassword_check
+
+- name: Error NW_GetMasterPassword.masterPwd wrong
+  fail:
+    msg: "ERROR: NW_GetMasterPassword.masterPwd wrong in {{ insappsvr_input_file_inifile }} - {{ insappsvr_initfile_NW_GetMasterPassword_check.stdout }}"
+  when: insappsvr_initfile_NW_GetMasterPassword_check.stdout == ""
+
+- name: Check nwUsers.sapsysGID params in {{ insappsvr_input_file_inifile }}
+  shell: "grep nwUsers.sapsysGID {{ insappsvr_input_file_inifile }} | awk '{print $3}'"
+  register: insappsvr_initfile_nwUsers_sapsysGID_check
+
+- name: Error nwUsers.sapsysGID wrong
+  fail:
+    msg: "ERROR: nwUsers.sapsysGID wrong in {{ insappsvr_input_file_inifile }} - {{ insappsvr_initfile_nwUsers_sapsysGID_check.stdout }}"
+  when: not insappsvr_initfile_nwUsers_sapsysGID_check.stdout| int > 0
+
+- name: Check nwUsers.sidAdmUID params in {{ insappsvr_input_file_inifile }}
+  shell: "grep nwUsers.sidAdmUID {{ insappsvr_input_file_inifile }} | awk '{print $3}'"
+  register: insappsvr_initfile_nwUsers_sidAdmUID_check
+
+- name: Error nwUsers.sidAdmUID wrong
+  fail:
+    msg: "ERROR: nwUsers.sidAdmUID wrong in {{ insappsvr_input_file_inifile }} - {{ insappsvr_initfile_nwUsers_sidAdmUID_check.stdout }}"
+  when: not insappsvr_initfile_nwUsers_sidAdmUID_check.stdout| int >0
+
+- name: Check NW_DI:<NW_release>.{{ insappsvr_input_SAPDBType }}.PD params in {{ insappsvr_input_file_inifile }}
+  shell: "grep 'NW_DI:' {{ insappsvr_input_file_inifile }} | grep '.{{ insappsvr_input_SAPDBType }}.PD' | grep '#' | cut -d ':' -f2 | awk '{print $1}' | sed 's/.$//'"
+  register: insappsvr_initfile_NW_release_check
+
+- name: Error NW_DI:<NW_release>.{{ insappsvr_input_SAPDBType }}.PD wrong
+  fail:
+    msg: "ERROR: no NW_DI:<NW_release>.{{ insappsvr_input_SAPDBType }}.PD found in {{ insappsvr_input_file_inifile }} "
+  when: insappsvr_initfile_NW_release_check.stdout == ""
+
+- name: Check HDB_Schema_Check_Dialogs.schemaName parameter in {{ insappsvr_input_file_inifile }}
+  shell: "grep HDB_Schema_Check_Dialogs.schemaName {{ insappsvr_input_file_inifile }} | grep -v '#' | awk '{print $3}'"
+  register: insappsvr_initfile_HDB_Schema_Check_Dialogs_schemaName_check
+  when: insappsvr_input_SAPDBType == "HDB"
+
+- name: Error HDB_Schema_Check_Dialogs.schemaName is not set
+  fail:
+    msg: "ERROR: HDB_Schema_Check_Dialogs.schemaName is not set in {{insappsvr_input_file_inifile }} - {{ insappsvr_initfile_HDB_Schema_Check_Dialogs_schemaName_check.stdout }}"
+  when: insappsvr_input_SAPDBType == "HDB" and insappsvr_initfile_HDB_Schema_Check_Dialogs_schemaName_check.stdout == ""
+
+- name: Check HDB_Schema_Check_Dialogs.schemaPassword parameter in {{ insappsvr_input_file_inifile }}
+  shell: "grep HDB_Schema_Check_Dialogs.schemaPassword {{ insappsvr_input_file_inifile }} | grep des25 | cut -d '=' -f2"
+  register: insappsvr_initfile_HDB_Schema_Check_Dialogs_schemaPassword_check
+  when: insappsvr_input_SAPDBType == "HDB"
+
+- name: Error HDB_Schema_Check_Dialogs.schemaPassword is not set
+  fail:
+    msg: "ERROR: HDB_Schema_Check_Dialogs.schemaPassword is not set in {{ insappsvr_input_file_inifile }} - {{ insappsvr_initfile_HDB_Schema_Check_Dialogs_schemaPassword_check.stdout }}"
+  when: insappsvr_input_SAPDBType == "HDB" and insappsvr_initfile_HDB_Schema_Check_Dialogs_schemaPassword_check.stdout == ""
+
+- name: Check NW_HDB_getDBInfo.instanceNumber params in {{ insappsvr_input_file_inifile }}
+  shell: "grep NW_HDB_getDBInfo.instanceNumber  {{ insappsvr_input_file_inifile }} | grep -v '#' | awk '{print $3}'"
+  register: insappsvr_initfile_NW_HDB_getDBInfo_instanceNumber_check
+  when: insappsvr_input_SAPDBType == "HDB"
+
+- name: Error NW_HDB_getDBInfo.instanceNumber wrong
+  fail:
+    msg: "ERROR: NW_HDB_getDBInfo.instanceNumber wrong in {{ insappsvr_input_file_inifile }} - {{ insappsvr_initfile_NW_HDB_getDBInfo_instanceNumber_check.stdout }}"
+  when: insappsvr_input_SAPDBType == "HDB" and ( insappsvr_initfile_NW_HDB_getDBInfo_instanceNumber_check.stdout| int <1 or insappsvr_initfile_NW_HDB_getDBInfo_instanceNumber_check.stdout| int >99 ) and insappsvr_initfile_NW_HDB_getDBInfo_instanceNumber_check.stdout != "0" and insappsvr_initfile_NW_HDB_getDBInfo_instanceNumber_check.stdout != "00"
+
+- name: Check HANA client software in {{ insappsvr_input_file_inifile }}
+  shell: "grep SAPINST.CD.PACKAGE.RDBMS-HDB-CLIENT  {{ insappsvr_input_file_inifile }} | grep -v '#' | cut -d '=' -f2"
+  register: insappsvr_initfile_SAPINST_CD_PACKAGE_RDBMS_HDB_CLIENT_check
+  when: insappsvr_input_SAPDBType == "HDB"
+
+- name: Check {{ insappsvr_initfile_NW_readProfileDir_check.stdout }}
+  stat:
+    path: "{{ insappsvr_initfile_NW_readProfileDir_check.stdout }}"
+  register: insappsvr_chk_usr_sap_profile
+
+- name: fail when the profile directory does not exist
+  fail:
+   msg: "ERROR: the profile directory {{ insappsvr_initfile_NW_readProfileDir_check.stdout }} does not exist"
+  when: insappsvr_chk_usr_sap_profile.stat.exists == false
+
+- name: Check HANA DB Client in /usr/sap/<SAPSID>/hdbclient
+  stat:
+    path: "/usr/sap/{{ insappsvr_input_sap_sid }}/hdbclient"
+  register: insappsvr_chk_hdbclient_usrsapsid
+
+- name: Error SAPINST.CD.PACKAGE.RDBMS-HDB-CLIENT does not exist
+  fail:
+    msg: "ERROR: SAPINST.CD.PACKAGE.RDBMS-HDB-CLIENT  wrong in {{ insappsvr_input_file_inifile }} - {{ insappsvr_initfile_SAPINST_CD_PACKAGE_RDBMS_HDB_CLIENT_check.stdout }}"
+  when: insappsvr_input_SAPDBType == "HDB" and not insappsvr_chk_hdbclient_usrsapsid.stat.exists and insappsvr_initfile_SAPINST_CD_PACKAGE_RDBMS_HDB_CLIENT_check.stdout == ""
+
+- name: Check HANA client software path
+  stat:
+    path: "{{ insappsvr_initfile_SAPINST_CD_PACKAGE_RDBMS_HDB_CLIENT_check.stdout }}"
+  register: insappsvr_initfile_SAPINST_CD_PACKAGE_RDBMS_HDB_CLIENT_path_check
+  when: insappsvr_input_SAPDBType == "HDB" and not insappsvr_chk_hdbclient_usrsapsid.stat.exists
+
+- name: Error SAPINST.CD.PACKAGE.RDBMS-HDB-CLIENT path does not exist
+  fail:
+    msg: "ERROR: please check SAPINST.CD.PACKAGE.RDBMS-HDB-CLIENT path in {{ insappsvr_input_file_inifile }} - {{ insappsvr_initfile_SAPINST_CD_PACKAGE_RDBMS_HDB_CLIENT_path_check.stdout }} cannot find"
+  when: insappsvr_input_SAPDBType == "HDB" and not insappsvr_chk_hdbclient_usrsapsid.stat.exists and not insappsvr_initfile_SAPINST_CD_PACKAGE_RDBMS_HDB_CLIENT_path_check.stat.exists
+
+- name: Check IGSHELPER.SAR in global
+  stat:
+    path: "/sapmnt/{{ insappsvr_input_sap_sid }}/exe/uc/as400_pase_64/IGSHELPER.SAR"
+  register: insappsvr_chk_igshelper_global
+
+- name: Check SAP archives download basket in {{ insappsvr_input_file_inifile }}
+  shell: "grep archives.downloadBasket  {{ insappsvr_input_file_inifile }} | grep -v '#' | cut -d '=' -f2"
+  register: insappsvr_initfile_downloadbasket
+
+- name: Error parameter archives.downloadBasket is empty
+  fail:
+    msg: "ERROR: parameter archives.downloadBasket is empty in {{ insappsvr_input_file_inifile }} - {{ insappsvr_initfile_downloadbasket.stdout }}"
+  when: not insappsvr_chk_igshelper_global.stat.exists and insappsvr_initfile_downloadbasket.stdout == ""
+
+- name: Check SAP archives download basket
+  stat:
+    path: "{{ insappsvr_initfile_downloadbasket.stdout }}"
+  register: insappsvr_initfile_downloadbasket_check
+
+- name: fail when download basket of IGSHELPER.SAR does not exist
+  fail:
+   msg: "ERROR: the download basket of the IGSHELPER.SAR does not exist - {{ insappsvr_initfile_downloadbasket.stdout }}"
+  when: not insappsvr_chk_igshelper_global.stat.exists and not insappsvr_initfile_downloadbasket_check.stat.exists
+
+- name: Install App server
+  command: "./sapinst SAPINST_INPUT_PARAMETERS_URL={{ insappsvr_input_file_inifile }} SAPINST_EXECUTE_PRODUCT_ID=NW_DI:{{ insappsvr_initfile_NW_release_check.stdout }} SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false"
+  register: insappsvr_cmd_install_sap_appserver
+  args:
+    chdir: "{{ insappsvr_dir_swpm_managednode }}"
+
+- name: Save output to log file
+  copy:
+    content: "{{ insappsvr_cmd_install_sap_appserver.stdout }}"
+    dest: "{{ insappsvr_logfile_path }}/{{ insappsvr_timestamp_for_logfile }}"

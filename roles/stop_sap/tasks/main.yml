@@ -15,20 +15,30 @@
 
 # tasks file for stop_sap
 
+- name: TAGS check
+  fail:
+    msg: "Error - Tag {{ ansible_run_tags }} is undefined. The following tags are supported by role stop_sap: sap_stop_instances, sap_stop_all_systems, sap_stop_services or all (default)."
+  when:
+    - "not 'sap_stop_instances' in ansible_run_tags"
+    - "not 'sap_stop_all_systems' in ansible_run_tags"
+    - "not 'sap_stop_services' in ansible_run_tags"
+    - "not 'all' in ansible_run_tags"
+  tags: always
+
 # stop pre task
 - name: SAP Stop pre task
   import_tasks: sap_stop_pre.yml
-  tags: sap_stop_instance
+  tags: sap_stop_instances
 
 # stop Instance
 - name: Stop Instance
-  import_tasks: sap_stop_instance.yml
-  tags: sap_stop_instance
+  import_tasks: sap_stop_instances.yml
+  tags: sap_stop_instances
 
-# stop All Instances
-- name: Stop All Instances
-  import_tasks: sap_stop_all_instances.yml
-  tags: never,sap_stop_all_instances
+# stop All Systems
+- name: Stop All Systems
+  import_tasks: sap_stop_all_systems.yml
+  tags: never,sap_stop_all_systems
   
 # stop Service
 - name: Stop Service
