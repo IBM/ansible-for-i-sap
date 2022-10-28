@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Role upgrade_sap_hana_client &mdash; IBM ansible-for-i-sap collection 1.1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Role upgrade_sap_kernel" href="upgrade_sap_kernel.html" />
+    <link rel="prev" title="Role stop_sap" href="stop_sap.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> IBM ansible-for-i-sap collection
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation and configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install_and_config.html">Installation and configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Available roles</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install_saphostagent.html">Role install_saphostagent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sap_install_app_server.html">Role sap_install_app_server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sap_opsyscheck.html">Role sap_opsyscheck</a></li>
+<li class="toctree-l1"><a class="reference internal" href="start_sap.html">Role start_sap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stop_sap.html">Role stop_sap</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Role upgrade_sap_hana_client</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tags">Tags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#variables">Variables</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#remarks">Remarks:</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#defaults">Defaults</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-playbooks">Example Playbooks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#install-or-upgrade-an-sap-hana-client">Install or Upgrade an SAP HANA client</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#uninstall-an-sap-hana-client">Uninstall an SAP HANA client</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#license">License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#author-information">Author Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#copyright">Copyright</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="upgrade_sap_kernel.html">Role upgrade_sap_kernel</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">IBM ansible-for-i-sap collection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Role upgrade_sap_hana_client</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/IBM/ansible-for-i-sap/blob/main/docs/docsite/upgrade_sap_hana_client.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="role-upgrade-sap-hana-client">
+<span id="ibm-ansible-for-i-sap-docsite-upgrade-sap-hana-client"></span><h1><a class="toc-backref" href="#id12">Role upgrade_sap_hana_client</a><a class="headerlink" href="#role-upgrade-sap-hana-client" title="Permalink to this headline"></a></h1>
+<p>The SAP HANA client is needed to access a remote SAP HANA database from an SAP Application Server ABAP running on IBM i. It can be downloaded from the Software Distribution Center in the SAP Support Portal (<a class="reference external" href="https://support.sap.com/swdc">SWDC</a>) as an SAP Archive (SAR) file. The installation of the SAP HANA client on IBM i is explained in <a class="reference external" href="https://launchpad.support.sap.com/#/notes/1705999">SAP Note 1705999</a>. For preventive maintenance, it is advised to upgrade the SAP HANA client from time to time with the latest version. The role upgrade_sap_hana_client is used to install, upgrade or uninstall an SAP HANA client from a downloaded SAR file. Both SAP HANA client versions are supported, version 1 and version 2.</p>
+<p>To extract the downloaded SAR file, you must provide the SAP utility SAPCAR and provide it’s location in variable <code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_dir_sapcar_managednode</span></code>. By default, SAPCAR from the SAP Host Agent executable directory <code class="docutils literal notranslate"><span class="pre">/usr/sap/hostctrl/exe</span></code> is being used.</p>
+<p>If you upgrade or uninstall an already installed SAP HANA client, the currently installed version is first backed up into a compressed file that follows the naming pattern <code class="docutils literal notranslate"><span class="pre">__save_HDB_Client.&lt;Timestamp-Year-Month-Day-Hour-Minute-Second&gt;.tar.Z</span></code>. By default, the backup file is saved in directory <code class="docutils literal notranslate"><span class="pre">/tmp/Ansible/HANA/hdbclient_backup</span></code>. Older backups in this directory are not cleaned up automatically, so you may want to check and clean up the directory manually from time to time.</p>
+<p>If you install or upgrade an SAP HANA client, the downloaded SAR file is extracted into a temporary directory, by default <code class="docutils literal notranslate"><span class="pre">/tmp/Ansible/HANA/hana_client_extract</span></code>. After a successful installation of the SAP HANA client, this directory will be deleted. After some consistency checks, the installation of the SAP HANA client will be performed by executing the program <code class="docutils literal notranslate"><span class="pre">hdbinst</span></code> with the parameter <code class="docutils literal notranslate"><span class="pre">-path</span></code> and the path name specified in variable <code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_dir_hdb_client_managednode</span></code>. The default target path name is <code class="docutils literal notranslate"><span class="pre">/usr/sap/&lt;sid&gt;/hdbclient</span></code>, but you may want to specify another path name if your system is configured to use <code class="docutils literal notranslate"><span class="pre">sapcpe</span></code>, as described in <a class="reference external" href="https://launchpad.support.sap.com/#/notes/1705999">SAP Note 1705999</a>.</p>
+<p>If you uninstall an SAP HANA client, the role will try to use the program <code class="docutils literal notranslate"><span class="pre">hdbuninst</span></code> from the SAP HANA client directory (specified in variable <code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_dir_hdb_client_managednode</span></code>). If the program <code class="docutils literal notranslate"><span class="pre">hdbuninst</span></code> is not found, it will be extracted from the downloaded SAP archive specified in variable <code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_file_hana_client_sar_name</span></code> and located in the directory defined by variable <code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_dir_hana_client_download_managednode</span></code>.</p>
+<p>An upgrade or uninstall operation will fail if an SAP instance is active that is using the currently installed SAP HANA client. In this case, you need to stop the active SAP application server instances and repeat the upgrade or the uninstall.</p>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#role-upgrade-sap-hana-client" id="id12">Role upgrade_sap_hana_client</a></p>
+<ul>
+<li><p><a class="reference internal" href="#requirements" id="id13">Requirements</a></p></li>
+<li><p><a class="reference internal" href="#tags" id="id14">Tags</a></p></li>
+<li><p><a class="reference internal" href="#variables" id="id15">Variables</a></p></li>
+<li><p><a class="reference internal" href="#defaults" id="id16">Defaults</a></p></li>
+<li><p><a class="reference internal" href="#dependencies" id="id17">Dependencies</a></p></li>
+<li><p><a class="reference internal" href="#example-playbooks" id="id18">Example Playbooks</a></p></li>
+<li><p><a class="reference internal" href="#license" id="id19">License</a></p></li>
+<li><p><a class="reference internal" href="#author-information" id="id20">Author Information</a></p></li>
+<li><p><a class="reference internal" href="#copyright" id="id21">Copyright</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="requirements">
+<h2><a class="toc-backref" href="#id13">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this headline"></a></h2>
+<p>This role is intended for the operating system IBM i. The target system must be enabled to execute Ansible playbooks. For details, see the prerequisites section in <a class="reference internal" href="install_and_config.html#ibm-ansible-for-i-sap-docsite-install-and-config-prerequisites"><span class="std std-ref">Ansible Content for IBM Power Systems - IBM i with SAP Software</span></a>.</p>
+<p>The role upgrade_sap_hana_client must be executed as user profile QSECOFR or a user profile with similar authorities, user class <em>*SECOFR</em> or at least special authorities <em>*ALLOBJ</em>, <em>*SECADM</em> and <em>*JOBCTL</em>.</p>
+<p>When the SAP HANA client is upgraded or uninstalled, all SAP instances that are using the currently installed SAP HANA client must be stopped.</p>
+<p>When installing a new SAP HANA client, the directory specified in variable <code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_dir_hdb_client_managednode</span></code> (default: <code class="docutils literal notranslate"><span class="pre">/usr/sap/&lt;sid&gt;/hdbclient</span></code>) must not exist and will be created. When upgrading or uninstalling an SAP HANA client, the directory specified in variable <code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_dir_hdb_client_managednode</span></code> must exist, and its owner must be the user profile specified in variable <code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_usr_hdb_client_dir_owner</span></code> (default: <code class="docutils literal notranslate"><span class="pre">&lt;sid&gt;adm</span></code>).</p>
+<p>Ensure that the IBM i host has enough free diskspace for creating and holding the backup files as well as the temporary files. By default, these files and directories will be created in directory <code class="docutils literal notranslate"><span class="pre">/tmp/Ansible/HANA</span></code>.</p>
+</section>
+<section id="tags">
+<h2><a class="toc-backref" href="#id14">Tags</a><a class="headerlink" href="#tags" title="Permalink to this headline"></a></h2>
+<p>The following tags can be specified. Omitting the tag or specifying tag <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">all</span></code> has the same effect as the <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">upgrade_sap_hana_client</span></code>.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 73%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Tag</p></th>
+<th class="head"><p>Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">upgrade_sap_hana_client</span></code></p></td>
+<td><p>An already installed SAP HANA client will be updated with the version provided in
+the SAP archive specified by variable <code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_file_hana_client_sar_name</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">install_sap_hana_client</span></code></p></td>
+<td><p>A new SAP HANA client will be installed from the SAP archive specified by
+variable <code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_file_hana_client_sar_name</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">uninstall_sap_hana_client</span></code></p></td>
+<td><p>An already installed SAP HANA client will be uninstalled.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="variables">
+<h2><a class="toc-backref" href="#id15">Variables</a><a class="headerlink" href="#variables" title="Permalink to this headline"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 50%" />
+<col style="width: 7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Usage</p></th>
+<th class="head"><p>Required</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_input_sap_sid</span></code></p></td>
+<td><p>SAP SID of the SAP HANA System</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_usr_hdb_client_dir_owner</span></code></p></td>
+<td><p>Owner of the SAP HANA Client directory</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id10" id="id2">1</a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_dir_hdb_client_managednode</span></code></p></td>
+<td><p>Directory on the target host where the SAP HANA client resides.
+The directory must not exist when installing the SAP HANA client
+for the first time. It must exist and be owned by the user profile
+specified in <code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_usr_hdb_client_dir_owner</span></code> when an
+already installed SAP HANA client is upgraded or uninstalled.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id10" id="id3">1</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_dir_hdb_client_backup_managednode</span></code></p></td>
+<td><p>Backup directory to backup the HANA client directory</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id10" id="id4">1</a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_dir_hana_client_download_managednode</span></code></p></td>
+<td><p>Directory on the target node where the SAP archive (SAR) file with
+the SAP HANA client executables is provided.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id11" id="id5">2</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_file_hana_client_sar_name</span></code></p></td>
+<td><p>Name of the SAP HANA client SAP archive (SAR) file.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id11" id="id6">2</a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_dir_temp_hana_client_extract_managednode</span></code></p></td>
+<td><p>Temporary directory, that will be created on the target host and
+used for extracting the HANA client SAP archive (SAR) file.</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id10" id="id7">1</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_dir_sapcar_managednode</span></code></p></td>
+<td><p>Directory on the target host where SAPCAR utility is provided</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id10" id="id8">1</a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_file_sapcar_name</span></code></p></td>
+<td><p>SAPCAR utility file name</p></td>
+<td><p>Yes <a class="footnote-reference brackets" href="#id10" id="id9">1</a></p></td>
+</tr>
+</tbody>
+</table>
+<section id="remarks">
+<h3>Remarks:<a class="headerlink" href="#remarks" title="Permalink to this headline"></a></h3>
+<dl class="footnote brackets">
+<dt class="label" id="id10"><span class="brackets">1</span><span class="fn-backref">(<a href="#id2">1</a>,<a href="#id3">2</a>,<a href="#id4">3</a>,<a href="#id7">4</a>,<a href="#id8">5</a>,<a href="#id9">6</a>)</span></dt>
+<dd><p>Default provided.</p>
+</dd>
+<dt class="label" id="id11"><span class="brackets">2</span><span class="fn-backref">(<a href="#id5">1</a>,<a href="#id6">2</a>)</span></dt>
+<dd><p>Default provided. Not necessarily required with tag <code class="docutils literal notranslate"><span class="pre">uninstall_sap_hana_client</span></code> if the SAP HANA client directory is complete and operational.</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="defaults">
+<h2><a class="toc-backref" href="#id16">Defaults</a><a class="headerlink" href="#defaults" title="Permalink to this headline"></a></h2>
+<p>Suggested default values are provided in defaults/main.yml:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 48%" />
+<col style="width: 7%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head" colspan="2"><p>Variable</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td colspan="2"><p><code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_usr_hdb_client_dir_owner</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&lt;sid&gt;adm&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td colspan="2"><p><code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_dir_hdb_client_managednode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;/usr/sap/&lt;SID&gt;/hdbclient&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td colspan="2"><p><code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_dir_hdb_client_backup_managednode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;/tmp/Ansible/HANA/hdbclient_backup&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td colspan="2"><p><code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_dir_hana_client_download_managednode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;/tmp/Ansible/HANA/hana_client_download&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td colspan="2"><p><code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_file_hana_client_sar_name</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;HANA_CLIENT.SAR&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td colspan="2"><p><code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_dir_temp_hana_client_extract_managednode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;/tmp/Ansible/HANA/hana_client_extract&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td colspan="2"><p><code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_dir_sapcar_managednode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;/usr/sap/hostctrl/exe&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td colspan="2"><p><code class="docutils literal notranslate"><span class="pre">upgsaphdbclt_file_sapcar_name</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;SAPCAR&quot;</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="dependencies">
+<h2><a class="toc-backref" href="#id17">Dependencies</a><a class="headerlink" href="#dependencies" title="Permalink to this headline"></a></h2>
+<p>None.</p>
+</section>
+<section id="example-playbooks">
+<h2><a class="toc-backref" href="#id18">Example Playbooks</a><a class="headerlink" href="#example-playbooks" title="Permalink to this headline"></a></h2>
+<section id="install-or-upgrade-an-sap-hana-client">
+<h3>Install or Upgrade an SAP HANA client<a class="headerlink" href="#install-or-upgrade-an-sap-hana-client" title="Permalink to this headline"></a></h3>
+<p>The example playbook is used to install or upgrade the SAP HANA client software for an SAP system named HDA on several hosts. It is based on the assumption that a configuration file and an inventory file with contents similar to the <a class="reference internal" href="install_and_config.html#ibm-ansible-for-i-sap-docsite-install-and-config-configuration"><span class="std std-ref">configuration documentation</span></a> exist in the current directory. The necessary SAP archive file IMDB_CLIENT20_004_202-80002091.SAR must have been downloaded from the SAP Software Distribution Center and stored in directory /tmp/Ansible/HANA/hana_client_download. The playbook is located in the current directory, named upgrade_hdb_client.yml and has the following contents:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install or Upgrade SAP HANA Client</span><span class="w"></span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ibm_i_servers</span><span class="w"></span>
+<span class="w">   </span><span class="l l-Scalar l-Scalar-Plain">vars</span><span class="p p-Indicator">:</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">upgsaphdbclt_input_sap_sid</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;HDA&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">upgsaphdbclt_usr_hdb_client_dir_owner</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;hdaadm&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">upgsaphdbclt_dir_hdb_client_managednode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/usr/sap/HDA/hdbclient&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">upgsaphdbclt_dir_hdb_client_backup_managednode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/tmp/ANSIBLE/HANA/hdb_client_backup&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">upgsaphdbclt_dir_hana_client_download_managednode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/tmp/Ansible/HANA/hana_client_download&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">upgsaphdbclt_file_hana_client_sar_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;IMDB_CLIENT20_004_202-80002091.SAR&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">upgsaphdbclt_dir_temp_hana_client_extract_managednode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/tmp/Ansible/HANA/hana_client_extract&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">upgsaphdbclt_dir_sapcar_managednode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/usr/sap/hostctrl/exe&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">upgsaphdbclt_file_sapcar_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SAPCAR&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">roles</span><span class="p">:</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ansible_dir&gt;/roles/upgrade_sap_hana_client</span><span class="w"></span>
+</pre></div>
+</div>
+<p>or shorter, by relying on default values as much as possible:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install or Upgrade SAP HANA Client</span><span class="w"></span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ibm_i_servers</span><span class="w"></span>
+<span class="w">   </span><span class="l l-Scalar l-Scalar-Plain">vars</span><span class="p p-Indicator">:</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">upgsaphdbclt_input_sap_sid</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;HDA&quot;</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">upgsaphdbclt_file_hana_client_sar_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;IMDB_CLIENT20_004_202-80002091.SAR&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">roles</span><span class="p">:</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ansible_dir&gt;/roles/upgrade_sap_hana_client</span><span class="w"></span>
+</pre></div>
+</div>
+<p>To install new SAP HANA clients on systems where no SAP HANA clients existed yet, execute the playbook with this command:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ansible-playbook --verbose -t install_sap_hana_client upgrade_hdb_client.yml</span><span class="w"></span>
+</pre></div>
+</div>
+<p>To upgrade already existing SAP HANA clients, execute the playbook with this command:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ansible-playbook --verbose -t upgrade_sap_hana_client upgrade_hdb_client.yml</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
+<section id="uninstall-an-sap-hana-client">
+<h3>Uninstall an SAP HANA client<a class="headerlink" href="#uninstall-an-sap-hana-client" title="Permalink to this headline"></a></h3>
+<p>The example playbook is used to uninstall the SAP HANA client software from directory /usr/sap/HDA/hdbclient on several hosts. It is based on the assumption that a configuration file and an inventory file with contents similar to the <a class="reference internal" href="install_and_config.html#ibm-ansible-for-i-sap-docsite-install-and-config-configuration"><span class="std std-ref">configuration documentation</span></a> exist in the current directory. The playbook is located in the current directory, named upgrade_hdb_client.yml and has the following contents:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Uninstall SAP HANA Client</span><span class="w"></span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ibm_i_servers</span><span class="w"></span>
+<span class="w">   </span><span class="l l-Scalar l-Scalar-Plain">vars</span><span class="p p-Indicator">:</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">upgsaphdbclt_input_sap_sid</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;HDA&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">roles</span><span class="p">:</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ansible_dir&gt;/roles/upgrade_sap_hana_client</span><span class="w"></span>
+</pre></div>
+</div>
+<p>To execute this playbook, enter the command:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ansible-playbook --verbose -t uninstall_sap_hana_client upgrade_hdb_client.yml</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="license">
+<h2><a class="toc-backref" href="#id19">License</a><a class="headerlink" href="#license" title="Permalink to this headline"></a></h2>
+<p>This collection is licensed under the <a class="reference external" href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 license</a>.</p>
+</section>
+<section id="author-information">
+<h2><a class="toc-backref" href="#id20">Author Information</a><a class="headerlink" href="#author-information" title="Permalink to this headline"></a></h2>
+<p>SAP on IBM Power Development Team</p>
+</section>
+<section id="copyright">
+<h2><a class="toc-backref" href="#id21">Copyright</a><a class="headerlink" href="#copyright" title="Permalink to this headline"></a></h2>
+<p>Copyright IBM Corporation 2021,2022</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="stop_sap.html" class="btn btn-neutral float-left" title="Role stop_sap" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="upgrade_sap_kernel.html" class="btn btn-neutral float-right" title="Role upgrade_sap_kernel" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021,2022, IBM.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

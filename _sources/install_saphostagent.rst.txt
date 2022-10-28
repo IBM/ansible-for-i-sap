@@ -90,9 +90,9 @@ None.
 Example Playbook
 ----------------
 
-The example playbook is based on the assumption that a configuration file and an inventory file with contents similar to the :ref:`configuration documentation <IBM.ansible-for-i-sap.docsite.install_and_config.configuration>` exist in the current directory. The necessary SAP Host Agent archive must have been downloaded from the SAP Software Distribution Center and stored in directory /tmp/downloads/saphostagent. The SAPCAR executable is available from a previous version of the SAP Host Agent in directory /usr/sap/hostctrl/exe or has been downloaded from the SAP Software Distribution Center into the download directory. The example playbook in the current directory is named install_saphostagent.yml and has the following contents:
+The example playbook is used to upgrade the SAP Host Agent to a newer patch level on several hosts. It is based on the assumption that a configuration file and an inventory file with contents similar to the :ref:`configuration documentation <IBM.ansible-for-i-sap.docsite.install_and_config.configuration>` exist in the current directory. The necessary SAP Host Agent archive must have been downloaded from the SAP Software Distribution Center and stored in directory /tmp/downloads/saphostagent on each of the hosts. The SAPCAR executable is available from a previous version of the SAP Host Agent in directory /usr/sap/hostctrl/exe or has been downloaded from the SAP Software Distribution Center into the download directory. The example playbook in the current directory is named install_saphostagent.yml and has the following contents:
 
-.. code:: YAML
+.. code:: yaml
 
     - hosts: ibmi_servers
       vars:
@@ -102,8 +102,8 @@ The example playbook is based on the assumption that a configuration file and an
 
 To execute this playbook, enter the command:
 
-.. code:: YAML
-  
+.. code:: yaml
+
   ansible-playbook --verbose install_saphostagent.yml
 
 License

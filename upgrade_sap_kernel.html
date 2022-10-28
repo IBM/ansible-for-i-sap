@@ -18,7 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Role stop_sap" href="stop_sap.html" /> 
+    <link rel="prev" title="Role upgrade_sap_hana_client" href="upgrade_sap_hana_client.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -47,6 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="sap_opsyscheck.html">Role sap_opsyscheck</a></li>
 <li class="toctree-l1"><a class="reference internal" href="start_sap.html">Role start_sap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stop_sap.html">Role stop_sap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upgrade_sap_hana_client.html">Role upgrade_sap_hana_client</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Role upgrade_sap_kernel</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tags">Tags</a></li>
@@ -245,7 +246,7 @@ To avoid runtime errors, the length of the path name should not exceed 220 chara
 </section>
 <section id="example-playbook">
 <h2><a class="toc-backref" href="#id15">Example Playbook</a><a class="headerlink" href="#example-playbook" title="Permalink to this headline"></a></h2>
-<p>The example playbook is based on the assumption that a configuration file and an inventory file with contents similar to the <a class="reference internal" href="install_and_config.html#ibm-ansible-for-i-sap-docsite-install-and-config-configuration"><span class="std std-ref">configuration documentation</span></a> exist in the current directory. It replaces the existing kernel of SAP system PRD with a new stack kernel in the same release. The necessary archives must have been downloaded from the SAP Software Distribution Center and stored in directory /tmp/downloads/kernel. The playbook is located in the current directory, named replace_kernel_in_same_release.yml and has the following contents:</p>
+<p>The example playbook is used to replace the existing kernel of SAP system PRD with a new stack kernel in the same release on several hosts. It is based on the assumption that a configuration file and an inventory file with contents similar to the <a class="reference internal" href="install_and_config.html#ibm-ansible-for-i-sap-docsite-install-and-config-configuration"><span class="std std-ref">configuration documentation</span></a> exist in the current directory. The necessary archives must have been downloaded from the SAP Software Distribution Center and stored in directory /tmp/downloads/kernel. The playbook is located in the current directory, named replace_kernel_in_same_release.yml and has the following contents:</p>
 <div class="highlight-YAML notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ibmi_servers</span><span class="w"></span>
 <span class="w">  </span><span class="nt">vars</span><span class="p">:</span><span class="w"></span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">upgsapkrn_input_sap_sid</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;PRD&quot;</span><span class="w"></span>
@@ -277,7 +278,7 @@ To avoid runtime errors, the length of the path name should not exceed 220 chara
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="stop_sap.html" class="btn btn-neutral float-left" title="Role stop_sap" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="upgrade_sap_hana_client.html" class="btn btn-neutral float-left" title="Role upgrade_sap_hana_client" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
