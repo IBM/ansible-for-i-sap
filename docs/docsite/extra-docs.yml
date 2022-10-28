@@ -9,4 +9,5 @@ sections:
       - sap_opsyscheck
       - start_sap
       - stop_sap
+      - upgrade_sap_hana_client
       - upgrade_sap_kernel

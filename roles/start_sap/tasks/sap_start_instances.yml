@@ -14,7 +14,7 @@
 #   limitations under the License.
 
 ###########################################
-# tasks file for sap_start_instance
+# tasks file for sap_start_instances
 ###########################################
 
 - name: Start SAP instance

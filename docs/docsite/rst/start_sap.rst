@@ -74,7 +74,11 @@ Suggested default values are provided in defaults/main.yml:
 +------------------------------------------+-----------------------------+
 | ``startsap_input_waitforstarted``        | ``"1200"``                  |
 +------------------------------------------+-----------------------------+
+| ``startsap_env_classicuserconcept``      | For internal use only       |
++------------------------------------------+-----------------------------+
 | ``startsap_ordered_list_instance_types`` | For internal use only       |
++------------------------------------------+-----------------------------+
+| ``startsap_sapstartsrv_user``            | For internal use only       |
 +------------------------------------------+-----------------------------+
 
 Dependencies
@@ -85,11 +89,11 @@ None.
 Example Playbook
 ----------------
 
-The example playbook is based on the assumption that a configuration file and an inventory file with contents similar to the :ref:`configuration documentation <IBM.ansible-for-i-sap.docsite.install_and_config.configuration>` exist in the current directory. The SAP start services for SAP system PRD are active. The example playbook in the current directory is named start_sap.yml and has the following contents:
+The example playbook is used to start all instances of an SAP system with the SAP system ID (SID) PRD. It is based on the assumption that a configuration file and an inventory file with contents similar to the :ref:`configuration documentation <IBM.ansible-for-i-sap.docsite.install_and_config.configuration>` exist in the current directory. The ASCS instance is installed on host ibmiserver01.mycorp.com, and the SAP start services for SAP system PRD are active on all hosts that have instances for SAP system PRD. The example playbook in the current directory is named start_sap.yml and has the following contents:
 
 .. code:: YAML
 
-     - hosts: ibmi_servers
+     - hosts: ibmiserver01.mycorp.com
        vars:
        - startsap_input_sap_sid: "PRD"
        roles:
@@ -100,6 +104,8 @@ To execute this playbook, enter the command:
 .. code:: YAML
 
    ansible-playbook --verbose start_sap.yml -t sap_start_instances
+
+Note: When using the role start_sap with tag ``-t sap_start_instances`` to start instances of an SAP system on several hosts, you only need to execute the role on one host, typically the host that holds the central services instance. When using the role start_sap with tag ``-t sap_start_services`` to start the SAP start services, you must execute it on all hosts that hold SAP instances for the specified SAP system.
 
 License
 -------

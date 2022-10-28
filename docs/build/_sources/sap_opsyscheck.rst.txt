@@ -25,6 +25,8 @@ This role is intended for the operating system IBM i. The target system must be 
 
 The role sap_opsyscheck must be executed as user profile QSECOFR or a user profile with similar authorities, user class *\*SECOFR* or at least special authorities *\*ALLOBJ*, *\*SECADM* and *\*JOBCTL*. If the user profile does not have these special authorities, the results of the role are unpredictable.
 
+The check for the job tables filling requires IBM i 7.3 with SF99703 Level 22, IBM i 7.4 with SF99704 Level 10, or a higher IBM i release. On releases prior to IBM i 7.3, the check is skipped. On IBM i 7.3 or IBM i 7.4 without the required PTF level, the check will result in an error because column ``IN_USE_JOB_TABLE_ENTRIES`` cannot be found in catalog view ``QSYS2.SYSTEM_STATUS_INFO``.
+
 Tags
 ----
 
@@ -83,7 +85,7 @@ Suggested default values are provided in defaults/main.yml:
 +===============================================+=============================+
 | ``sapopsyschk_dir_temp_managednode``          | ``"/tmp/ansible"``          |
 +-----------------------------------------------+-----------------------------+
-| ``sapopsyschk_job_tables_percent_input``      | ``"10_"``                   |
+| ``sapopsyschk_job_tables_percent_input``      | ``10_``                     |
 +-----------------------------------------------+-----------------------------+
 
 Dependencies
@@ -94,9 +96,9 @@ None.
 Example Playbook
 ----------------
 
-The example playbook is based on the assumption that a configuration file and an inventory file with contents similar to the :ref:`configuration documentation <IBM.ansible-for-i-sap.docsite.install_and_config.configuration>` exist in the current directory. The necessary archive must have been downloaded from the SAP Software Distribution Center and stored in directory /tmp/downloads/saphostagent. The example playbook in the current directory is named sap_opsyscheck.yml and has the following contents:
+The example playbook is used to check operating system related settings on all configured hosts with the operating system IBM i. It is based on the assumption that a configuration file and an inventory file with contents similar to the :ref:`configuration documentation <IBM.ansible-for-i-sap.docsite.install_and_config.configuration>` exist in the current directory. The example playbook in the current directory is named sap_opsyscheck.yml and has the following contents:
 
-.. code:: YAML
+.. code:: yaml
 
     - hosts: ibmi_servers
       roles:
@@ -104,7 +106,7 @@ The example playbook is based on the assumption that a configuration file and an
 
 To execute this playbook, enter the command:
 
-.. code:: YAML
+.. code:: yaml
   
    ansible-playbook sap_opsyscheck.yml
 

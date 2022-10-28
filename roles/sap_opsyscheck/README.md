@@ -18,6 +18,8 @@ This role is intended for the operating system IBM i. The target system must be 
 
 The role sap_opsyscheck must be executed as user profile QSECOFR or a user profile with similar authorities, user class *\*SECOFR* or at least special authorities *\*ALLOBJ*, *\*SECADM* and *\*JOBCTL*. If the user profile does not have these special authorities, the results of the role are unpredictable.
 
+The check for the job tables filling requires IBM i 7.3 with SF99703 Level 22, IBM i 7.4 with SF99704 Level 10, or a higher IBM i release. On releases prior to IBM i 7.3, the check is skipped.
+
 ## Dependencies
 
 None.

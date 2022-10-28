@@ -22,12 +22,12 @@
 ###########################################
 
 - name: Search profile name for all sap instances in /usr/sap/sapservices
-  shell:  "grep sapstartsrv /usr/sap/sapservices | grep -v '^ *#' | cut -f2 -d' '"
+  shell:  "grep sapstartsrv /usr/sap/sapservices | grep -v '^ *#' | awk -F 'pf=' '{ print $2;}' | cut -f1 -d' '"
   register: stopsap_list_sap_services
 
 - name: Set variable for stop command
   set_fact:
-    stopsap_cmd_sap_services: "{{ stopsap_list_sap_services.stdout_lines|replace('pf=', '') }}"
+    stopsap_cmd_sap_services: "{{ stopsap_list_sap_services.stdout_lines }}"
 
 - name: Error if sap instances or sapstartsrv was not found in /usr/sap/sapservices
   fail:
@@ -39,27 +39,33 @@
   register: stopsap_list_all_sap_instances_output
 
 - name: Search profile name for all sap instances in /usr/sap/sapservices
-  shell:  "grep {{ item }} /usr/sap/sapservices | grep -v '^ *#' | grep SCS | cut -f2 -d' '"
+  shell:  "grep {{ item }} /usr/sap/sapservices | grep -v '^ *#' | awk -F 'pf=' '{ print $2;}' | cut -f1 -d' '"
   register: stopsap_list_sap_services_output
   with_items: "{{ stopsap_list_all_sap_instances_output.stdout_lines }}"
 
 - name: Set variable
   set_fact:
-    stopsap_list_sap_services_output: "{{ stopsap_list_sap_services_output|replace('pf=', '') }}"
+    stopsap_list_sap_services_output: "{{ item.stdout_lines  }}"
+  with_items: "{{ stopsap_list_sap_services_output.results }}"
+  register: stopsap_list_sap_services_output_tmp
+
+- name: Make a list
+  set_fact:
+    stopsap_list_sap_services_output: "{{ stopsap_list_sap_services_output_tmp.results | map(attribute='ansible_facts.stopsap_list_sap_services_output') | list}}"
 
 ###########################################
 # Get if there is any running service
 ###########################################
 
 - name: Get instance numbers from profile name
-  shell: grep -w 'SAPSYSTEM'  {{ item.stdout }}
-  when: item.stdout != ""
-  with_items: "{{ stopsap_list_sap_services_output.results }}"
+  shell: grep -w 'SAPSYSTEM ='  {{ item }}
+  when: item != ""
+  with_items: "{{ stopsap_list_sap_services_output }}"
   register: stopsap_input_sap_sid_profile
 
 - name: Set variable for stop command
   set_fact:
-    stopsap_cmd_sap_services: "{{ item.stdout_lines | first }}"
+    stopsap_cmd_sap_services: "{{ item.stdout_lines }}"
   when: item.changed == True
   with_items: "{{ stopsap_input_sap_sid_profile.results }}"
   register: stopsap_cmd_prep_sap_services
@@ -68,15 +74,10 @@
   set_fact:
     stopsap_cmd_sap_services: "{{ stopsap_cmd_prep_sap_services.results | map(attribute='ansible_facts.stopsap_cmd_sap_services') | list }}"
 
-- name: Remove undefined from list
-  set_fact:
-    stopsap_cmd_sap_services: "{{ stopsap_cmd_sap_services | regex_findall('SAPSYSTEM = [0-9]+') }}"
-
 - name: Check if SAP instance is active
-  shell: "{{ stopsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ item.split()[2] }} -function GetSystemInstanceList |  grep {{ ansible_hostname }} | grep -i green | sort -k 5nr"
+  shell: "{{ stopsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ item.split()[2] }} -function GetSystemInstanceList |  grep {{ ansible_hostname }} | grep -i green | sort -k 5nr | cat"
   environment:
     LIBPATH: "{{ stopsap_dir_sapctrl_managednode }}"
-  failed_when: stopsap_output_list_inactive_instances.rc >= 2
   register: stopsap_output_list_inactive_instances
   with_items: "{{ stopsap_cmd_sap_services }}"
 

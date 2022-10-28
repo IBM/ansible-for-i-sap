@@ -74,7 +74,7 @@
 
 - name: Determining the user concept for all sap sid
   stat:
-    path: "/sapmnt/{{ item }}/profile/.newuserconceptaaa"
+    path: "/sapmnt/{{ item }}/profile/.newuserconcept"
   with_items: "{{ startsap_sap_sid_output.stdout_lines }}"
   register: startsap_env_classicuserconcept_all_output
   when: startsap_input_sap_sid == "*"

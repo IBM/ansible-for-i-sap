@@ -1,0 +1,40 @@
+---
+#   Copyright 2022 IBM Corporation
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+# defaults variables file for upgrade_sap_HANA_client
+
+# Default user name of the owner of the hdb client software directory: <SAPSID>ADM
+upgsaphdbclt_usr_hdb_client_dir_owner: "{{ upgsaphdbclt_input_sap_sid|lower }}adm"
+
+# Directory on the target host where the HANA client resides and should be upgraded /usr/sap/<SAPSID>/hdbclient
+upgsaphdbclt_dir_hdb_client_managednode: "/usr/sap/{{ upgsaphdbclt_input_sap_sid|upper }}/hdbclient"
+
+# Directory path, that will be created on the target host for the backup of the original HANA Client files
+upgsaphdbclt_dir_hdb_client_backup_managednode: "/tmp/Ansible/HANA/hdbclient_backup"
+
+# Directory path on the target node where SAR file of the HANA Client is located
+upgsaphdbclt_dir_hana_client_download_managednode: "/tmp/Ansible/HANA/hana_client_download"
+
+# Default name of the SAP HANA Client SAR file
+upgsaphdbclt_file_hana_client_sar_name: "HANA_CLIENT.SAR"
+
+# Temporary directory path, that will be created on the target host for extracting the HANA Client SAR file
+upgsaphdbclt_dir_temp_hana_client_extract_managednode: "/tmp/Ansible/HANA/hana_client_extract"
+
+# Directory path on the Ansible host where SAPCAR is located
+upgsaphdbclt_dir_sapcar_managednode: "/usr/sap/hostctrl/exe"
+
+# Default SAPCAR file name
+upgsaphdbclt_file_sapcar_name: "SAPCAR"

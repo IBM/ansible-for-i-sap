@@ -100,7 +100,7 @@ None.
 Example Playbook
 ----------------
 
-The example playbook is based on the assumption that a configuration file and an inventory file with contents similar to the :ref:`configuration documentation <IBM.ansible-for-i-sap.docsite.install_and_config.configuration>` exist in the current directory. It replaces the existing kernel of SAP system PRD with a new stack kernel in the same release. The necessary archives must have been downloaded from the SAP Software Distribution Center and stored in directory /tmp/downloads/kernel. The playbook is located in the current directory, named replace_kernel_in_same_release.yml and has the following contents:
+The example playbook is used to replace the existing kernel of SAP system PRD with a new stack kernel in the same release on several hosts. It is based on the assumption that a configuration file and an inventory file with contents similar to the :ref:`configuration documentation <IBM.ansible-for-i-sap.docsite.install_and_config.configuration>` exist in the current directory. The necessary archives must have been downloaded from the SAP Software Distribution Center and stored in directory /tmp/downloads/kernel. The playbook is located in the current directory, named replace_kernel_in_same_release.yml and has the following contents:
 
 .. code:: YAML
 

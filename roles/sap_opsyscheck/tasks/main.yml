@@ -53,7 +53,12 @@
   import_tasks: xref.yml
   tags: xref_status
 
+# The check job_tables.yml requires column IN_USE_JOB_TABLE_ENTRIES in
+# catalog view QSYS2.SYSTEM_STATUS_INFO, which is only available
+# as of IBM i 7.4 SF99704 Level 10 and IBM i 7.3 SF99703 Level 22.
 - name: Check Job Tables
   import_tasks: job_tables.yml
+  when: (ansible_distribution_version > "7") or
+        (ansible_distribution_version == "7") and (ansible_distribution_release >= "3")
   tags: job_tables
 

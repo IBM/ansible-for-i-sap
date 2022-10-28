@@ -24,6 +24,8 @@ The following roles for administrator tasks with SAP on IBM i are provided:
 
   - :ref:`Stop SAP instances or SAP start services <IBM.ansible-for-i-sap.docsite.stop_sap>`
 
+  - :ref:`Upgrade the SAP HANA client software for an already existing SAP system <IBM.ansible-for-i-sap.docsite.upgrade_sap_hana_client>`
+
   - :ref:`Upgrade the kernel of an already existing SAP system <IBM.ansible-for-i-sap.docsite.upgrade_sap_kernel>`
 
 Follow the links for a detailed description of the roles.
@@ -62,4 +64,5 @@ Copyright IBM Corporation 2021,2022
    sap_opsyscheck
    start_sap
    stop_sap
+   upgrade_sap_hana_client
    upgrade_sap_kernel

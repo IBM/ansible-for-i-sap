@@ -17,9 +17,16 @@
 # tasks file for install_saphostagent
 ###########################################
 
+
 ###########################################
 # Prepare target temp dir
 ############################################
+
+- name: Prepare target directory {{ insshagnt_dir_temp_managednode }}
+  file:
+    path: "{{ insshagnt_dir_temp_managednode }}"
+    state: absent
+    mode: '0755'
 
 - name: Ensure directory {{ insshagnt_dir_temp_managednode }} exists
   file:
@@ -34,18 +41,18 @@
 - name: Search for SAR files in {{ insshagnt_dir_download_managednode }} directory
   find:
     paths: "{{ insshagnt_dir_download_managednode }}"
-    patterns: "SAPHOSTAGENT*.SAR,saphostagent*.sar"
-  register: insshagnt_bool_saphostagent_sar_found
+    patterns: "*.SAR,*.sar"
+  register: insshagnt_input_file_saphostagent_sar_found
   when: insshagnt_input_file_saphostagent_sar is undefined
 
 - name: Error if no SAR file specified or found
   fail:
     msg: "Error: No SAPHOSTAGENT SAR file(s) found in {{ insshagnt_dir_download_managednode }} directory"
-  when: insshagnt_input_file_saphostagent_sar is undefined and insshagnt_bool_saphostagent_sar_found.files|length == 0
+  when: insshagnt_input_file_saphostagent_sar is undefined and insshagnt_input_file_saphostagent_sar_found.files|length == 0
 
 - name: Select latest of multiple SAR files
   ansible.builtin.set_fact:
-    insshagnt_file_saphostagent_sar: "{{ insshagnt_bool_saphostagent_sar_found.files | sort(attribute='path') | last }}"
+    insshagnt_file_saphostagent_sar: "{{ insshagnt_input_file_saphostagent_sar_found.files | sort(attribute='path') | last }}"
   when: insshagnt_input_file_saphostagent_sar is undefined
 
 - name: Set SAPHOSTAGENT filename variable
@@ -58,7 +65,7 @@
     msg: "Error: SAPHOSTAGENT SAR file neither specified nor found in directory {{ insshagnt_dir_download_managednode }}"
   when: insshagnt_input_file_saphostagent_sar == ""
 
-- name: Copy SAR based SAPHOSTAGENT [{{ insshagnt_input_file_saphostagent_sar }}] to the {{ insshagnt_dir_temp_managednode }} folder
+- name: Copy SAR based SAPHOSTAGENT [{{ insshagnt_input_file_saphostagent_sar }}] to the target directory [{{ insshagnt_dir_temp_managednode }}]
   copy:
     src: "{{ insshagnt_dir_download_managednode }}/{{ insshagnt_input_file_saphostagent_sar }}"
     dest: "{{ insshagnt_dir_temp_managednode }}/{{ insshagnt_input_file_saphostagent_sar }}"
@@ -71,10 +78,11 @@
 ### Workflow:
 ###   SAPCAR:
 ###   Check SAPCAR (insshagnt_file_sapcar)
-###    -   in insshagnt_dir_download_managednode -> use it
-###    -   available in insshagnt_dir_download_managednode
-###        available in insshagnt_dir_sapcar_default_managednode -> use it
-###    -   available in both dir -> end playbook
+###    -   provided in variable insshagnt_dir_sapcar_managednode? -> use it
+###    -   available     in insshagnt_dir_download_managednode? -> use it
+###    -   not available in insshagnt_dir_download_managednode
+###        but available in insshagnt_dir_sapcar_default_managednode? -> use it
+###    -   not available in either dir -> end playbook
 
 - name: Search for SAPCAR in {{ insshagnt_dir_download_managednode }} directory
   ansible.builtin.stat:
@@ -86,7 +94,7 @@
     insshagnt_dir_sapcar_managednode: "{{ insshagnt_dir_download_managednode }}"
   when: ( insshagnt_stat_output.stat.exists == true ) and ( insshagnt_stat_output.stat.executable == true )
 
-- name: Search SAPCAR in {{ insshagnt_dir_sapcar_default_managednode }} folder
+- name: Search for SAPCAR in {{ insshagnt_dir_sapcar_default_managednode }} folder
   ansible.builtin.stat:
     path: "{{ insshagnt_dir_sapcar_default_managednode }}/{{ insshagnt_file_sapcar }}"
   register: insshagnt_stat_output
@@ -115,10 +123,10 @@
   command: >-
     {{ insshagnt_dir_sapcar_managednode }}/{{ insshagnt_file_sapcar }} \
     -xvf {{ insshagnt_dir_temp_managednode }}/{{ insshagnt_input_file_saphostagent_sar }} -manifest SIGNATURE.SMF
-  register: insshagnt_cmd_extract_sar
+  register: insshagnt_cmd_output_extract_sar
   args:
     chdir: "{{ insshagnt_dir_temp_managednode }}"
-  changed_when: "'SAPCAR: processing archive' in insshagnt_cmd_extract_sar.stdout"
+  changed_when: "'SAPCAR: processing archive' in insshagnt_cmd_output_extract_sar.stdout"
 
 - name: Prepare SAPHOSTAGENT install command argument
   ansible.builtin.set_fact:
@@ -129,10 +137,10 @@
 
 - name: Install SAPHOSTAGENT with command argument {{ insshagnt_install_cmd_args }}
   command: "{{ insshagnt_dir_temp_managednode }}/saphostexec -install {{ insshagnt_install_cmd_args }}"
-  register: insshagnt_cmd_install_saphostagent
+  register: insshagnt_cmd_output_install_saphostagent
   args:
     chdir: "{{ insshagnt_dir_temp_managednode }}"
-  changed_when: "'Install service' in insshagnt_cmd_install_saphostagent.stdout"
+  changed_when: "'Install service' in insshagnt_cmd_output_install_saphostagent.stdout"
 
 - name: Start SAP Database Collector for IBM i if configured
   shell:

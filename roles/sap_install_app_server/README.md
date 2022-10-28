@@ -4,9 +4,9 @@ After the initial install of an SAP system, you can add or remove additional app
 
 Typically, the SWPM is used as an interactive tool which takes the input from the SAP administrator to perform the selected installation activity. Besides that, the SWPM can be executed in unattended mode and process a parameter input file that has been prepared prior to the actual execution. For more information about the unattended mode for the SWPM, see <a href="https://launchpad.support.sap.com/#/notes/2230669">SAP Note 2230669</a> and the <a href=https://help.sap.com/docs/SOFTWARE_PROVISIONING_MANAGER/30839dda13b2485889466316ce5b39e9/c8ed609927fa4e45988200b153ac63d1.html>SAP Installation Documentation</a>, section "System Provisioning Using a Parameter Input File".
 
-The role sap_install_app_server is installing or uninstalling additional application servers on IBM i using the SWPM in unattended mode. To execute the SWPM in unattended mode, the role is using a parameter input file called "inifile.params". The role sap_install_app_server can create its on input file based on Ansible input variables during execution or use an already existing input file that has been created by the SWPM previously.
+The role sap_install_app_server is installing or uninstalling additional application servers on IBM i using the SWPM in unattended mode. To execute the SWPM in unattended mode, the role is using a parameter input file called "inifile.params". The role sap_install_app_server can create its own input file based on Ansible input variables during its execution or use an already existing input file that has been created by the SWPM previously.
 
-Currently, application server installations based on SAP NetWeaver 7.4 and higher are supported for both IBM Db2 for i and SAP HANA as the database. The role sap_install_app_server only supports SWPM 1.0, SWPM 2.0 is currently not supported.
+Currently, installations for additional SAP ABAP application servers based on SAP NetWeaver 7.4 and higher are supported with a database of type IBM Db2 for i or SAP HANA. The role sap_install_app_server only supports SWPM 1.0, SWPM 2.0 is not supported with this role.
 
 For detail guides and reference, please visit the <a href="https://ibm.github.io/ansible-for-i-sap/">Documentation</a> site.
 
@@ -26,7 +26,7 @@ A current version of the SAP Host Agent must be installed.
 
 The database, ASCS instance and primary application server instance (or the central instance) of the SAP system must be installed. At least the ASCS instance of the SAP system must be active.
 
-The global directories of the SAP system (``/sapmnt/<sid>/exe``, ``/sapmnt/<sid>/global``, ``/sapmnt/<sid>/j2ee`` and ``/sapmnt/<sid>/profile``) must be accessible from the managed node.
+The global directories of the SAP system (``/sapmnt/<sid>/exe``, ``/sapmnt/<sid>/global``, ``/sapmnt/<sid>/j2ee`` and ``/sapmnt/<sid>/profile``)  must be accessible by the installation user from the managed node.
 
 ## Dependencies
 

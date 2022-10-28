@@ -26,4 +26,5 @@ startsap_ordered_list_instance_types:
   - SMDA
 startsap_sapstartsrv_user: "{{ startsap_input_sap_sid | lower }}adm"
 startsap_input_waitforstarted: "1200"
+# FOR INTERNAL USE:
 startsap_env_classicuserconcept: "N"

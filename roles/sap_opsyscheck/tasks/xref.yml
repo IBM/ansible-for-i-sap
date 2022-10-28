@@ -22,7 +22,6 @@
     cmd: system "RCLDBXREF OPTION(*CHECK)"
   register: xref_status_output
   ignore_errors: True
-  #  failed_when: xref_status_output.rc > 200
 
 - name: Show XREF-Status
   debug:

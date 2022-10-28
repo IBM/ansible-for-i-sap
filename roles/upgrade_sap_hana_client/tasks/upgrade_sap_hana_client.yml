@@ -1,0 +1,284 @@
+---
+#   Copyright 2022 IBM Corporation
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+
+
+###########################################
+# PreCheck
+
+
+##########################################
+# Check that the specified user exists
+##########################################
+
+#  if the user profile does not exist the command DSPUSRPRF will break fatal with the error message CPF2204
+- name: Validate the user profile {{ upgsaphdbclt_usr_hdb_client_dir_owner|upper }}
+  shell:
+    cmd: system DSPUSRPRF {{ upgsaphdbclt_usr_hdb_client_dir_owner|upper }} | grep "{{ upgsaphdbclt_usr_hdb_client_dir_owner|upper }}"
+
+######################################################
+# Validate the HANA client directory: "{{upgsaphdbclt_dir_hdb_client_managednode}}"
+######################################################
+
+# check that the HANA client dir really exists
+- name: "check that the HANA client dir really exists"
+  stat:
+    path: "{{ upgsaphdbclt_dir_hdb_client_managednode }}"
+  register: upgsaphdbclt_check_for_dir_hdb_client
+
+#  1) Issue an error message if the HANA client directory does not exist while upgrading or uninstalling
+#  2) Exit the playbook
+- name: "Error if {{ upgsaphdbclt_dir_hdb_client_managednode }} does not exist while upgrading or uninstalling"
+  fail:
+    msg: "Error: Directory {{ upgsaphdbclt_dir_hdb_client_managednode }} does not exist. Check if you are using the wrong directory name. If the target directory is correct and if you want to install the SAP HANA database client, use the tag install_sap_hana_client."
+  when:
+    - '"uninstall_sap_hana_client" in ansible_run_tags or "upgrade_sap_hana_client" in ansible_run_tags or "all" in ansible_run_tags'
+    - not upgsaphdbclt_check_for_dir_hdb_client.stat.exists
+
+#  1) Issue an error message if the HANA client directory does already exist while installing
+#  2) Exit the playbook
+- name: "Error if {{ upgsaphdbclt_dir_hdb_client_managednode }} does already exist while installing."
+  fail:
+    msg: "Error: Directory {{ upgsaphdbclt_dir_hdb_client_managednode }} does already exist. Check if you are using the wrong directory name or use the tag upgrade_sap_hana_client for an HANA database client upgrade."
+  when:
+    - '"install_sap_hana_client" in ansible_run_tags'
+    - upgsaphdbclt_check_for_dir_hdb_client.stat.exists
+
+######################################################
+# For the uninstall: Check the file hdbuninst in the hdbclient directory: "{{upgsaphdbclt_dir_hdb_client_managednode}}/install/hdbuninst"
+######################################################
+ 
+# check that the hdbclient uninstall exe really exists
+- name: "check that the HANA uninstall executable {{ upgsaphdbclt_dir_hdb_client_managednode }}/install/hdbuninst really exists"
+  stat:
+    path: "{{ upgsaphdbclt_dir_hdb_client_managednode }}/install/hdbuninst"
+  register: upgsaphdbclt_check_for_file_hdb_uninstall_of_hdb_client
+  when:
+    - '"uninstall_sap_hana_client" in ansible_run_tags'
+  
+# check that specified user is really the owner of the HANA client dir
+- name: "check that specified user is really the owner of the HANA client dir"
+  stat:
+    path: "{{ upgsaphdbclt_dir_hdb_client_managednode }}"
+  register: upgsaphdbclt_check_for_valid_user
+
+#  1) Issue an error message if the HANA client directory has the wrong owner while upgrading
+#  2) Exit the playbook
+- name: "Error if {{ upgsaphdbclt_usr_hdb_client_dir_owner }} is not the owner of files in HANA client dir"
+  fail:
+    msg: "Error: User: {{ upgsaphdbclt_usr_hdb_client_dir_owner|lower }} is not the owner of {{ upgsaphdbclt_dir_hdb_client_managednode }}"
+  when:
+    - '"upgrade_sap_hana_client" in ansible_run_tags or "all" in ansible_run_tags'
+    - upgsaphdbclt_check_for_valid_user.stat.pw_name != upgsaphdbclt_usr_hdb_client_dir_owner|lower
+
+######################################################
+# Check the file SACAR and the SAP HANA Client SAR file
+######################################################
+
+# Check for the existence of the SAPCAR utility
+- name: "Check if SAPCAR {{ upgsaphdbclt_dir_sapcar_managednode }}/{{ upgsaphdbclt_file_sapcar_name }} exists"
+  stat:
+    path: "{{ upgsaphdbclt_dir_sapcar_managednode }}/{{ upgsaphdbclt_file_sapcar_name }}"
+  register: upgsaphdbclt_check_file_SAPCAR
+
+#  1) Issue an error message if the SAPCAR utility does not exist. If uninstalling
+#  2) Exit the playbook
+- name: "Error if SAPCAR {{ upgsaphdbclt_dir_sapcar_managednode }}/{{ upgsaphdbclt_file_sapcar_name }} does not exist "
+  fail:
+    msg: "Error: SAPCAR file {{ upgsaphdbclt_dir_sapcar_managednode }}/{{ upgsaphdbclt_file_sapcar_name }} does not exist"
+  when:
+    - not upgsaphdbclt_check_file_SAPCAR.stat.exists
+    - 'not "uninstall_sap_hana_client" in ansible_run_tags or not upgsaphdbclt_check_for_file_hdb_uninstall_of_hdb_client.stat.exists'
+
+# Check for the existence of the SAP HANA Client SAR file
+- name: "Check if SAP HANA SAR file {{ upgsaphdbclt_dir_hana_client_download_managednode }}/{{ upgsaphdbclt_file_hana_client_sar_name }} exists"
+  stat:
+    path: "{{ upgsaphdbclt_dir_hana_client_download_managednode }}/{{ upgsaphdbclt_file_hana_client_sar_name }}"
+  register: upgsaphdbclt_check_file_HANA_client_SAR
+
+#  1) Issue an error message if the SAP HANA Client SAR file does not exist
+#  2) Exit the playbook
+- name: "Error if SAP HANA Client SAR file {{ upgsaphdbclt_dir_hana_client_download_managednode }}/{{ upgsaphdbclt_file_hana_client_sar_name }} does not exist "
+  fail:
+    msg: "Error: SAP HANA Client SAR file {{ upgsaphdbclt_dir_hana_client_download_managednode }}/{{ upgsaphdbclt_file_hana_client_sar_name }} does not exist"
+  when:
+    - not upgsaphdbclt_check_file_HANA_client_SAR.stat.exists
+    - 'not "uninstall_sap_hana_client" in ansible_run_tags or not upgsaphdbclt_check_for_file_hdb_uninstall_of_hdb_client.stat.exists'
+
+
+###########################################
+# Prepare target temp dir, extract HANA client SAR file and backup hdbclient directory
+###########################################
+
+# The backup directory can be used for multiple backups,, therefor the directory will be reused
+- name: "Check if directory {{ upgsaphdbclt_dir_hdb_client_backup_managednode }} exists"
+  stat:
+    path: "{{ upgsaphdbclt_dir_hdb_client_backup_managednode }}"
+  register: upgsaphdbclt_check_for_dir_backup
+
+- name: "Ensure directory {{ upgsaphdbclt_dir_hdb_client_backup_managednode }} exists, otherwise create"
+  file:
+    path: "{{ upgsaphdbclt_dir_hdb_client_backup_managednode }}"
+    state: directory
+    mode: '0777'
+  when:  not upgsaphdbclt_check_for_dir_backup.stat.exists
+
+# The working directory will be used temporarily, therefore the directory will be created freshly.
+- name: "Delete directory {{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }} if exists"
+  file:
+    path: "{{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }}"
+    state: absent
+    mode: '0777'
+
+- name: "Create directory {{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }}"
+  file:
+    path: "{{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }}"
+    state: directory
+    mode: '0777'
+
+# Backup existing HANA Client directory into: upgsaphdbclt_dir_temp_hana_client_extract_managednode as _save_HDB_Client.<timestamp>.tar.Z
+- name: "Tar,compress and backup the content of a the existing HANA client directory"
+  shell: "cd {{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }}; rm -f {{upgsaphdbclt_dir_temp_hana_client_extract_managednode }}/__save_HDB_Client.tar;  tar -cvf  {{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }}/__save_HDB_Client.tar  {{ upgsaphdbclt_dir_hdb_client_managednode }}; compress {{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }}/__save_HDB_Client.tar;"
+  register: upgsaphdbclt_save_work_dir_output
+  when:
+    - '"upgrade_sap_hana_client" in ansible_run_tags or "uninstall_sap_hana_client" in ansible_run_tags or "all" in ansible_run_tags'
+
+# Extract the HDB Client into a temporary working directory
+- name: "Extract HANA Client SAR file into the temporary working directory {{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }}"
+  shell: "cd {{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }};{{ upgsaphdbclt_dir_sapcar_managednode }}/{{ upgsaphdbclt_file_sapcar_name }} -xvf {{ upgsaphdbclt_dir_hana_client_download_managednode }}/{{ upgsaphdbclt_file_hana_client_sar_name }}"
+  register: upgsaphdbclt_save_work_dir_output
+  when:
+    - 'not "uninstall_sap_hana_client" in ansible_run_tags or not upgsaphdbclt_check_for_file_hdb_uninstall_of_hdb_client.stat.exists'
+
+# Handling of a wrong SAR file which isn't a HANA client SAR file and therefor does not contain the appropriate files.
+# Check for the existence of {{upgsaphdbclt_dir_temp_hana_client_extract_managednode}}//SAP_HANA_CLIENT/hdbinst
+- name: "Check if {{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }}/SAP_HANA_CLIENT/hdbinst exists"
+  stat:
+    path: "{{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }}/SAP_HANA_CLIENT/hdbinst"
+  register: upgsaphdbclt_check_for_file_hdb_install_of_HANA_client_SAR
+
+#  1) Issue an error message if  the {{upgsaphdbclt_dir_temp_hana_client_extract_managednode}}/SAP_HANA_CLIENT/hdbinst does not exist. A wrong SAR file might be used.
+#  2) Exit the playbook
+- name: "Check for correct SAR file."
+  fail:
+    msg: Error {{upgsaphdbclt_dir_temp_hana_client_extract_managednode}}/SAP_HANA_CLIENT/hdbinst does not exist. A wrong SAR file might be used."
+  when:
+    - 'not "uninstall_sap_hana_client" in ansible_run_tags or not upgsaphdbclt_check_for_file_hdb_uninstall_of_hdb_client.stat.exists'
+    - not upgsaphdbclt_check_for_file_hdb_install_of_HANA_client_SAR.stat.exists
+
+###########################################
+# Upgrade, install or uninstall the SAP HANA client using hdbinst/hdbuninst
+###########################################
+
+# Create the HANA client directory with the right permissions and owner/group for the installation
+- name: "Create directory {{ upgsaphdbclt_dir_hdb_client_managednode }} for the installation"
+  file:
+    path: "{{ upgsaphdbclt_dir_hdb_client_managednode }}"
+    state: directory
+    owner: "{{ upgsaphdbclt_usr_hdb_client_dir_owner|lower }}"
+    group: "r3group"
+    mode: '0755'
+  when:
+    - '"install_sap_hana_client" in ansible_run_tags'
+    - not upgsaphdbclt_check_for_dir_hdb_client.stat.exists
+
+# This is the update/install of the HDB Client directory. The update happens if no one uses this HDB client.
+- name: "Update/Install HANA Client directory."
+  ignore_errors: yes
+  shell: "{{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }}/SAP_HANA_CLIENT/hdbinst --path={{ upgsaphdbclt_dir_hdb_client_managednode }}"
+  register:  upgsaphdbclt_process_hdb_client_output
+  when:
+    - '"install_sap_hana_client" in ansible_run_tags or "upgrade_sap_hana_client" in ansible_run_tags or "all" in ansible_run_tags'
+
+# If an Application Server uses the hdbclient, the update/install/uninstall fails. A message is issued which is handled in the following step.
+- name: "Error handling upgrade/install/uninstall: Check about 'HANA client in use by any Application Server'"
+  ignore_errors: yes
+  fail:
+    msg: "Update/install of HANA client not possible. It seems that an SAP instance is using this client."
+  when:
+    - '"install_sap_hana_client" in ansible_run_tags or "upgrade_sap_hana_client" in ansible_run_tags or "all" in ansible_run_tags'
+    - upgsaphdbclt_process_hdb_client_output.stderr | regex_search("Terminate all locking processes")
+    
+# check that the extracted SAR uninstall exe really exists
+- name: "check that the HANA uninstall executable {{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }}/SAP_HANA_CLIENT/hdbuninst really exists"
+  stat:
+    path: "{{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }}/SAP_HANA_CLIENT/hdbuninst"
+  register: upgsaphdbclt_check_for_file_hdb_uninstall_of_extracted_SAR
+  when:
+    - '"uninstall_sap_hana_client" in ansible_run_tags'
+
+#  1) Issue an error message if no hdbuninst exists
+#  2) Exit the playbook
+- name: "Error if hdbuninst file does not exist: {{ upgsaphdbclt_dir_hdb_client_managednode }}/install/hdbuninst and {{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }}/SAP_HANA_CLIENT/hdbuninst"
+  fail:
+    msg: "Error: No SAP HANA file hdbuninst does exist. Take care you are using a correct SAP HANA database client SAR file which includes a file hdbuninst."
+  when:
+    - '"uninstall_sap_hana_client" in ansible_run_tags'
+    - not upgsaphdbclt_check_for_file_hdb_uninstall_of_hdb_client.stat.exists
+    - not upgsaphdbclt_check_for_file_hdb_uninstall_of_extracted_SAR.stat.exists
+
+# This is the uninstall of the HDB Client directory. The uninstall happens if no one uses this HDB client.
+- name: "Uninstall HANA Client directory using {{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }}/SAP_HANA_CLIENT/hdbuninst"
+  ignore_errors: yes
+  shell: "echo y | {{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }}/SAP_HANA_CLIENT/hdbuninst --path={{ upgsaphdbclt_dir_hdb_client_managednode }}"
+  register: upgsaphdbclt_uninstall_hdb_client_output
+  when:
+    - '"uninstall_sap_hana_client" in ansible_run_tags'
+    - upgsaphdbclt_check_for_file_hdb_uninstall_of_extracted_SAR.stat.exists
+
+# If an Application Server uses the hdbclient, the uninstall of the extracted HANA client SAR fails. A message is issued which is handled in the following step.
+- name: "Error handling uninstall: Check about 'HANA client in use by any Application Server'"
+  ignore_errors: yes
+  fail:
+    msg: "Uninstall of HANA client not possible. It seems that an SAP instance is using this client."
+  when:
+    - '"uninstall_sap_hana_client" in ansible_run_tags'
+    - upgsaphdbclt_check_for_file_hdb_uninstall_of_extracted_SAR.stat.exists
+    - upgsaphdbclt_uninstall_hdb_client_output.stderr | regex_search("Terminate all locking processes")
+    
+# This is the uninstall of the HDB Client directory. The uninstall happens if no one uses this HDB client.
+- name: "Uninstall HANA Client directory using {{ upgsaphdbclt_dir_hdb_client_managednode }}/install/hdbuninst"
+  ignore_errors: yes
+  shell: "echo y | {{ upgsaphdbclt_dir_hdb_client_managednode }}/install/hdbuninst --path={{ upgsaphdbclt_dir_hdb_client_managednode }}"
+  register:  upgsaphdbclt_uninstall_hdb_client_output
+  when:
+    - '"uninstall_sap_hana_client" in ansible_run_tags'
+    - not upgsaphdbclt_check_for_file_hdb_uninstall_of_extracted_SAR.stat.exists
+    - upgsaphdbclt_check_for_file_hdb_uninstall_of_hdb_client.stat.exists
+
+# If an Application Server uses the hdbclient, the uninstall of the hdbclient directory fails. A message is issued which is handled in the following step.
+- name: "Error handling uninstall: Check about 'HANA client in use by any Application Server'"
+  ignore_errors: yes
+  fail:
+    msg: "Uninstall of HANA client not possible. It seems that an SAP instance is using this client."
+  when:
+    - '"uninstall_sap_hana_client" in ansible_run_tags'
+    - not upgsaphdbclt_check_for_file_hdb_uninstall_of_extracted_SAR.stat.exists
+    - upgsaphdbclt_check_for_file_hdb_uninstall_of_hdb_client.stat.exists
+    - upgsaphdbclt_uninstall_hdb_client_output.stderr | regex_search("Terminate all locking processes")
+
+ # Copy HANA Client backup file from temp to backup directory
+- name: "Copy {{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }}/__save_HDB_Client.tar.Z to {{ upgsaphdbclt_dir_hdb_client_backup_managednode }}/_save_HDB_Client.<timestamp>.tar.Z"
+  shell: "cp {{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }}/__save_HDB_Client.tar.Z {{ upgsaphdbclt_dir_hdb_client_backup_managednode }}/__save_HDB_Client.$(date +\"%Y%m%d%H%M%S\").tar.Z;"
+  register: upgsaphdbclt_save_work_dir_output
+  when:
+    - '"upgrade_sap_hana_client" in ansible_run_tags or "uninstall_sap_hana_client" in ansible_run_tags or "all" in ansible_run_tags'
+
+# Clean-up the temporary working directory
+- name: "Delete directory {{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }}"
+  file:
+    path: "{{ upgsaphdbclt_dir_temp_hana_client_extract_managednode }}"
+    state: absent
+    mode: '0777'

@@ -48,9 +48,8 @@
   when: stopsap_list_sap_services == ""
 
 - name: Check  sap_nr {{ stopsap_input_sap_instance_nr }}
-  shell: "grep {{ stopsap_input_sap_sid }} /usr/sap/sapservices | grep -v '^ *#' | grep {{ stopsap_input_sap_instance_nr }}"
+  shell: "grep {{ stopsap_input_sap_sid }} /usr/sap/sapservices | grep -v '^ *#' | grep {{ stopsap_input_sap_instance_nr }} | cat"
   register: stopsap_check_sap_instance
-  failed_when: stopsap_check_sap_instance.rc >= 2
   when: stopsap_input_sap_instance_nr is defined
 
 - name: Error if {{ stopsap_input_sap_instance_nr }} was not found
@@ -62,16 +61,15 @@
 ###########################################
 # Check if there is any running service
 ###########################################
-  
+
 - name: Get one instance number from profile name
-  shell: grep -w 'SAPSYSTEM'  {{ stopsap_list_sap_services|replace('pf=', '') }}
+  shell: grep -w 'SAPSYSTEM'  {{ stopsap_list_sap_services.split()[0] |replace('pf=', '') }}
   register: stopsap_sap_sid_profile_name
 
 - name: Check if SAP instance is active
-  shell: "{{ stopsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ stopsap_sap_sid_profile_name.stdout.split()[2] }} -function GetSystemInstanceList | grep {{ ansible_nodename }} | grep -i green | sort -k 5nr | grep {{ stopsap_input_sap_instance_nr | default() }}"
+  shell: "{{ stopsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ stopsap_sap_sid_profile_name.stdout.split()[2] }} -function GetSystemInstanceList | grep {{ ansible_nodename }} | grep -i -e green -e yellow | sort -k 5nr | grep {{ stopsap_input_sap_instance_nr | default() }} |cat"
   environment:
     LIBPATH: "{{ stopsap_dir_sapctrl_managednode }}"
-  failed_when: stopsap_output_selected_active_instance.rc >= 2
   register: stopsap_output_selected_active_instance
   when: stopsap_input_sap_instance_nr is defined
 
@@ -93,10 +91,9 @@
   when:  stopsap_input_sap_instance_nr is defined
   
 - name: Get list of active SAP instances
-  shell: "{{ stopsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ stopsap_sap_sid_profile_name.stdout.split()[2] }} -function GetSystemInstanceList | grep -i green | sort -k 5nr"
+  shell: "{{ stopsap_dir_sapctrl_managednode }}/sapcontrol -nr {{ stopsap_sap_sid_profile_name.stdout.split()[2] }} -function GetSystemInstanceList | grep -i -e green -e yellow | sort -k 5nr | cat"
   environment:
     LIBPATH: "{{ stopsap_dir_sapctrl_managednode }}"
-  failed_when: stopsap_output_selected_active_instance.rc >= 2
   register: stopsap_output_selected_active_instance
   when:  stopsap_input_sap_instance_nr is undefined
 

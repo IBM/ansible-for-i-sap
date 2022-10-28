@@ -7,11 +7,11 @@ After the initial install of an SAP system, you can add or remove additional app
 
 Typically, the SWPM is used as an interactive tool which takes the input from the SAP administrator to perform the selected installation activity. Besides that, the SWPM can be executed in unattended mode and process a parameter input file that has been prepared prior to the actual execution. For more information about the unattended mode for the SWPM, see `SAP Note 2230669 <https://launchpad.support.sap.com/#/notes/2230669>`_ and the `SAP Installation Documentation <https://help.sap.com/docs/SOFTWARE_PROVISIONING_MANAGER/30839dda13b2485889466316ce5b39e9/c8ed609927fa4e45988200b153ac63d1.html>`_, section "System Provisioning Using a Parameter Input File".
 
-The role sap_install_app_server is installing or uninstalling additional application servers on IBM i using the SWPM in unattended mode. To execute the SWPM in unattended mode, the role is using a parameter input file called "inifile.params". The role sap_install_app_server can create its on input file based on Ansible input variables during execution or use an already existing input file that has been created by the SWPM previously.
+The role sap_install_app_server is installing or uninstalling additional application servers on IBM i using the SWPM in unattended mode. To execute the SWPM in unattended mode, the role is using a parameter input file called "inifile.params". The role sap_install_app_server can create its own input file based on Ansible input variables during its execution or use an already existing input file that has been created by the SWPM previously.
 
-Currently, application server installations based on SAP NetWeaver 7.4 and higher are supported for both IBM Db2 for i and SAP HANA as the database. The role sap_install_app_server only supports SWPM 1.0, SWPM 2.0 is currently not supported.
+Currently, installations for additional SAP ABAP application servers based on SAP NetWeaver 7.4 and higher are supported with a database of type IBM Db2 for i or SAP HANA. The role sap_install_app_server only supports SWPM 1.0, SWPM 2.0 is not supported with this role.
 
-If the SWPM is executed in unattended mode by Ansible and an error occurs, you will have to check the SWPM installation directory for the cause as in a manual installation. After correcting the error, you can restart the Ansible playbook again, and the SWPM will continue the current installation in unattended Mode from the point of the failure.
+If the SWPM is executed in unattended mode by Ansible and an error occurs, you will have to check the SWPM installation directory for the cause, like in a manual installation. After correcting the error, you can restart the Ansible playbook again, and the SWPM will continue the current installation in unattended mode at the point of the failure.
 
 .. contents:: Table of contents
    :depth: 2
@@ -37,7 +37,7 @@ A current version of the SAP Host Agent must be installed.
 
 The database, ASCS instance and primary application server instance (or the central instance) of the SAP system must be installed. At least the ASCS instance of the SAP system must be active.
 
-The global directories of the SAP system (``/sapmnt/<sid>/exe``, ``/sapmnt/<sid>/global``, ``/sapmnt/<sid>/j2ee`` and ``/sapmnt/<sid>/profile``) must be accessible from the target host.
+The global directories of the SAP system (``/sapmnt/<sid>/exe``, ``/sapmnt/<sid>/global``, ``/sapmnt/<sid>/j2ee`` and ``/sapmnt/<sid>/profile``) must be accessible  by the installation user from the managed node.
 
 Tags
 ----
@@ -47,9 +47,9 @@ Specify one of the following tags to specify if you want to install or uninstall
 +------------------------------+-------------------------------------------------------------------+
 | Tag                          | Usage                                                             |
 +==============================+===================================================================+
-| ``sap_install_app_server``   | Install an additional SAP application server                      |
+| ``sap_install_app_server``   | Install an additional SAP application server.                     |
 +------------------------------+-------------------------------------------------------------------+
-| ``sap_uninstall_app_server`` | Remove an existing SAP application server and its components      |
+| ``sap_uninstall_app_server`` | Remove an existing SAP application server and its components.     |
 +------------------------------+-------------------------------------------------------------------+
 
 Variables
@@ -78,23 +78,23 @@ Variables
 +-------------------------------------------------------+--------------------------------------------------------------------------------------------------+--------------------+
 | ``insappsvr_input_NW_GetMasterPassword``              | Encrypted master password used by the SWPM.                                                      | Yes [7]_ [4]_      |
 +-------------------------------------------------------+--------------------------------------------------------------------------------------------------+--------------------+
-| ``insappsvr_input_SAPInstDes25Hash``                  | Encryption string of the file inifile.params used by the SWPM                                    | Yes [7]_ [4]_      |
+| ``insappsvr_input_SAPInstDes25Hash``                  | Encryption string of the file inifile.params used by the SWPM.                                   | Yes [7]_ [4]_      |
 +-------------------------------------------------------+--------------------------------------------------------------------------------------------------+--------------------+
-| ``insappsvr_input_instkey``                           | Encryption string of the instkey.pkey used by the SWPM                                           | Yes [7]_ [4]_      |
+| ``insappsvr_input_instkey``                           | Encryption string of the instkey.pkey used by the SWPM.                                          | Yes [7]_ [4]_      |
 +-------------------------------------------------------+--------------------------------------------------------------------------------------------------+--------------------+
 | ``insappsvr_input_SAPDBType``                         | The SAP database type (``DB4`` for IBM Db2 for i or ``HDB`` for SAP HANA).                       | Yes [7]_ [5]_      |
 +-------------------------------------------------------+--------------------------------------------------------------------------------------------------+--------------------+
 | ``insappsvr_input_NW_release``                        | The SWPM Product ID needed for the SAP release of the SAP system.                                | Yes [7]_ [4]_      |
 +-------------------------------------------------------+--------------------------------------------------------------------------------------------------+--------------------+
-| ``insappsvr_input_dir_hdbclient_managednode``         | Directory where the HANA database client media is located.                                       | Yes [7]_ [6]_ [4]_ |
+| ``insappsvr_input_dir_hdbclient_managednode``         | Directory where the HANA database client media is located (only used with SAP HANA).             | Yes [7]_ [6]_ [4]_ |
 +-------------------------------------------------------+--------------------------------------------------------------------------------------------------+--------------------+
 | ``insappsvr_input_dir_downloadbasket_managednode``    | Directory where the IGSHELPER.SAR archive is located.                                            | Yes [7]_ [6]_ [4]_ |
 +-------------------------------------------------------+--------------------------------------------------------------------------------------------------+--------------------+
-| ``insappsvr_input_HDB_Schema_schemaName``             | The SAP HANA database schema.                                                                    | Yes [7]_ [4]_      |
+| ``insappsvr_input_HDB_Schema_schemaName``             | The SAP HANA database schema (only used with SAP HANA).                                          | Yes [7]_ [4]_      |
 +-------------------------------------------------------+--------------------------------------------------------------------------------------------------+--------------------+
-| ``insappsvr_input_HDB_Schema_schemaPassword``         | Encrypted password of SAP HANA database schema.                                                  | Yes [7]_ [4]_      |
+| ``insappsvr_input_HDB_Schema_schemaPassword``         | Encrypted password of SAP HANA database schema (only used with SAP HANA).                        | Yes [7]_ [4]_      |
 +-------------------------------------------------------+--------------------------------------------------------------------------------------------------+--------------------+
-| ``insappsvr_input_HDB_getDBInfo_instanceNumber``      | The HDB instance number.                                                                         | Yes [7]_ [4]_      |
+| ``insappsvr_input_HDB_getDBInfo_instanceNumber``      | The HDB instance number (only used with SAP HANA).                                               | Yes [7]_ [4]_      |
 +-------------------------------------------------------+--------------------------------------------------------------------------------------------------+--------------------+
 | ``uninsappsvr_input_sap_sid``                         | The SAP SID of the SAP system used for the uninstall of an application server.                   | Yes [8]_           |
 +-------------------------------------------------------+--------------------------------------------------------------------------------------------------+--------------------+
@@ -107,7 +107,7 @@ Remarks:
 ^^^^^^^^
 
 .. [1] Default provided.
-.. [2] Needed software and location of the software have be provided.
+.. [2] Required software and the location of the software has to be provided.
 .. [3] Only needed in mode reuseInifile.
 .. [4] Only needed in mode createInifile. For encrypted data like passwords, the data has to be copied directly from the SWPM generated files inifile.params and instkey.pkey!
 .. [5] Only needed in mode createInifile. Default provided.
@@ -125,7 +125,7 @@ Suggested default values are provided in defaults/main.yml:
 +===============================================+=============================+
 | ``insappsvr_input_install_mode``              | ``"reuseInifile"``          |
 +-----------------------------------------------+-----------------------------+
-| ``insappsvr_logfile_path``                    | ``"/tmp/Ansible/log"``      |
+| ``insappsvr_logfile_path``                    | ``"/tmp/Ansible/SWPM"``     |
 +-----------------------------------------------+-----------------------------+
 | ``insappsvr_input_SAPDBType``                 | ``"DB4"``                   |
 +-----------------------------------------------+-----------------------------+
@@ -137,23 +137,20 @@ Dependencies
 
 None.
 
-
-Playbooks
----------
+Example Playbooks
+-----------------
 
 SAP Installation
 ^^^^^^^^^^^^^^^^
 
 **Example Playbook for the installation of the SAP additional application server reusing an existing inifile.params and the related instkey.pkey**
 
-Note: For more information how to create an inifile.params file, see `SAP Note 2230669 <https://launchpad.support.sap.com/#/notes/2230669>`_.
-
-The example playbook in the current directory is named sap_install_app_server_reuseInifile.yml and has the following contents:
+The example playbook is used to install an additional application server for an already installed SAP system with the SAP system ID (SID) PRD on a host named ibmiserver02.mycorp.com. The underlying database is IBM Db2 for i. It is based on the assumption that a configuration file and an inventory file with contents similar to the :ref:`configuration documentation <IBM.ansible-for-i-sap.docsite.install_and_config.configuration>` exist in the current directory. During the installation, a previously prepared file name inifile.params will be used. For more information how to create an inifile.params file, see `SAP Note 2230669 <https://launchpad.support.sap.com/#/notes/2230669>`_. Make sure that the software locations defined in the file inifile.params are available. The example playbook in the current directory is named sap_install_app_server_reuseInifile.yml and has the following contents:
 
 .. code:: yaml
 
     - name: Install SAP Additional Application Server
-      hosts: ibmi_servers
+      hosts: ibmiserver02.mycorp.com
       vars:
        - insappsvr_input_install_mode: "reuseInifile"
        - insappsvr_input_sap_sid: "PRD"
@@ -162,31 +159,26 @@ The example playbook in the current directory is named sap_install_app_server_re
       roles:
        - role: <ansible_dir>/roles/sap_install_app_server
 
-Note: Make sure, the software locations defined in the inifile.params are still available. For example: the SAP HANA database client.
-
-Note: Due to a glitch in the SWPM, the location of the SAP HANA DB client media will not be automatically saved in inifile.params after is was specified during the installation. Ensure to add the following line to inifile.params before using it with this Ansible role::
+Note: Due to a glitch in the SWPM, the location of the SAP HANA DB client media will not be automatically saved in inifile.params after is has been specified during the installation dialog. Add the following line manually to inifile.params before using it with this Ansible role::
 
     SAPINST.CD.PACKAGE.RDBMS-HDB-CLIENT=<SAP_HANA_DB_Client_Media_Directory>
 
 This is also explained in the SAP installation documentation.
 
-Run the installation by:
+To execute this playbook, enter the command:
 
 .. code:: yaml
 
    ansible-playbook --verbose sap_install_app_server_reuseInifile.yml -t sap_install_app_server
 
-
 **Example Playbook for the installation of the SAP additional application server creating its own inifile.params and the related instkey.pkey**
 
-Note: For more information how to create an inifile.params file, see `SAP Note 2230669 <https://launchpad.support.sap.com/#/notes/2230669>`_.
-
-The example playbook in the current directory is named sap_install_app_server_createInifile.yml and has the following contents:
+The example playbook is used to install an additional application server for an already installed SAP system with the SAP system ID (SID) PRD on a host named ibmiserver02.mycorp.com. The underlying database is SAP HANA. It is based on the assumption that a configuration file and an inventory file with contents similar to the :ref:`configuration documentation <IBM.ansible-for-i-sap.docsite.install_and_config.configuration>` exist in the current directory. During the installation, the installation parameter file inifile.params will be created based on the specified parameters. For more information how to create an inifile.params file, see `SAP Note 2230669 <https://launchpad.support.sap.com/#/notes/2230669>`_. Make sure that the software locations defined in the file inifile.params are available, for example the SAP HANA database client. The example playbook in the current directory is named sap_install_app_server_createInifile.yml and has the following contents:
 
 .. code:: yaml
 
     - name: Install SAP Additional Application Server
-      hosts: ibmi_servers
+      hosts: ibmiserver02.mycorp.com
       vars:
        - insappsvr_input_install_mode: "createInifile"
        - insappsvr_input_sap_sid: "PRD"
@@ -207,7 +199,7 @@ The example playbook in the current directory is named sap_install_app_server_cr
       roles:
        - role: <ansible_dir>/roles/sap_install_app_server
 
-Run the installation by:
+To execute this playbook, enter the command:
 
 .. code:: yaml
 
@@ -252,18 +244,40 @@ For some selected entries for the playbook Yaml file you must use the following 
 +-----------------------------+--------------------------+-----------------------------------------------------------------+
 
 
-
 SAP Uninstall
 ^^^^^^^^^^^^^
 
-**Example Playbook for the uninstall of the SAP additional application server creating its own inifile.params**
+**Example Playbook for the uninstall of the SAP additional application server reusing an existing inifile.params**
 
-The example playbook in the current directory is named sap_uninstall_app_server_createInifile.yml and has the following contents:
+The example playbook is used to uninstall an application server with instance number 07 from an SAP system with the SAP system ID (SID) PRD on a host named ibmiserver02.mycorp.com. It is based on the assumption that a configuration file and an inventory file with contents similar to the :ref:`configuration documentation <IBM.ansible-for-i-sap.docsite.install_and_config.configuration>` exist in the current directory. During the installation, a previously prepared file name inifile.params will be used. For more information how to create an inifile.params file, see `SAP Note 2230669 <https://launchpad.support.sap.com/#/notes/2230669>`_. Make sure that the software locations defined in the file inifile.params are available. The example playbook in the current directory is named sap_uninstall_app_server_reuseInifile.yml and has the following contents:
 
 .. code:: yaml
 
     - name: Uninstall SAP Additional Application Server
-      hosts: ibmi_servers
+      hosts: ibmiserver02.mycorp.com
+      vars:
+       - insappsvr_input_install_mode: "reuseInifile"
+       - insappsvr_dir_swpm_managednode: "/tmp/ANSIBLE/SWPM10"
+       - uninsappsvr_input_file_inifile: "/tmp/ANSIBLE/inifiles/PRD/uninst/07/inifile.params"
+      roles:
+       - role: <ansible_dir>/roles/sap_install_app_server
+
+Note: No encrypted data and no instkey.pkey are needed for an SAP uninstall reusing an existing inifile.params file. This playbook works with both IBM Db2 for i and SAP HANA.
+
+To execute this playbook, enter the command:
+
+.. code:: yaml
+
+   ansible-playbook --verbose sap_uninstall_app_server_reuseInifile.yml -t sap_uninstall_app_server
+
+**Example Playbook for the uninstall of the SAP additional application server creating its own inifile.params**
+
+The example playbook is used to uninstall an application server with instance number 07 from an SAP system with the SAP system ID (SID) PRD on a host named ibmiserver02.mycorp.com. It is based on the assumption that a configuration file and an inventory file with contents similar to the :ref:`configuration documentation <IBM.ansible-for-i-sap.docsite.install_and_config.configuration>` exist in the current directory. During the installation, the installation parameter file inifile.params will be created based on the specified parameters. For more information how to create an inifile.params file, see `SAP Note 2230669 <https://launchpad.support.sap.com/#/notes/2230669>`_. Make sure that the software locations defined in the file inifile.params are available. The example playbook in the current directory is named sap_uninstall_app_server_createInifile.yml and has the following contents:
+
+.. code:: yaml
+
+    - name: Uninstall SAP Additional Application Server
+      hosts: ibmiserver02.mycorp.com
       vars:
        - insappsvr_input_install_mode: "createInifile"
        - insappsvr_dir_swpm_managednode: "/tmp/ANSIBLE/SWPM10"
@@ -272,42 +286,13 @@ The example playbook in the current directory is named sap_uninstall_app_server_
       roles:
        - role: <ansible_dir>/roles/sap_install_app_server
 
-Note: No encrypted data and no other data are needed as input. Actually more or less, only the SAP SID and the SAP Instance number are needed for the uninstall.
+Note: Mainly the SAP SID and the SAP instance number are needed for the uninstall, no encrypted passwords or other details. This playbook works with both IBM Db2 for i and SAP HANA.
 
-Run the installation by:
+To execute this playbook, enter the command:
 
 .. code:: yaml
 
    ansible-playbook --verbose sap_uninstall_app_server_createInifile.yml -t sap_uninstall_app_server
-
-
-
-**Example Playbook for the uninstall of the SAP additional application server reusing an existing inifile.params**
-
-Note: For more information how to create an inifile.params file, see `SAP Note 2230669 <https://launchpad.support.sap.com/#/notes/2230669>`_.
-
-The example playbook in the current directory is named sap_uninstall_app_server_reuseInifile.yml and has the following contents:
-
-.. code:: yaml
-
-    - name: Uninstall SAP Additional Application Server
-      hosts: ibmi_servers
-      vars:
-       - insappsvr_input_install_mode: "reuseInifile"
-       - insappsvr_dir_swpm_managednode: "/tmp/ANSIBLE/SWPM10"
-       - uninsappsvr_input_file_inifile: "/tmp/ANSIBLE/inifiles/PRD/uninst/07/inifile.params"
-      roles:
-       - role: <ansible_dir>/roles/sap_install_app_server
-
-Note: No encrypted data and no instkey.pkey are needed for an SAP uninstall reusing an existing inifile.params file.
-
-Run the installation by:
-
-.. code:: yaml
-
-   ansible-playbook --verbose sap_uninstall_app_server_reuseInifile.yml -t sap_uninstall_app_server
-
-
 
 Additional Information
 ----------------------

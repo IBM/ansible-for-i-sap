@@ -1,0 +1,35 @@
+---
+#   Copyright 2022 IBM Corporation
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+# tasks file for upgrade_sap_hana_client
+
+- name: Tags check for current tag {{ ansible_run_tags }}
+  fail:
+    msg: "Error - Tag {{ ansible_run_tags }} is undefined. The following tags are supported by role upgrade_sap_hana_client: upgrade_sap_hana_client, install_sap_hana_client and uninstall_sap_hana_client. No tag, respectively the tag all, behaves the same as the tag upgrade_sap_hana_client."
+  when:
+    - "not 'upgrade_sap_hana_client' in ansible_run_tags"
+    - "not 'install_sap_hana_client' in ansible_run_tags"
+    - "not 'uninstall_sap_hana_client' in ansible_run_tags"
+    - "not 'all' in ansible_run_tags"
+  tags: always
+
+# Upgrade, install or uninstall SAP HANA Client
+- name: Upgrade SAP HANA Client
+  import_tasks: upgrade_sap_hana_client.yml
+  tags:
+    - upgrade_sap_hana_client
+    - install_sap_hana_client
+    - uninstall_sap_hana_client
+    - all
